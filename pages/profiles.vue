@@ -70,7 +70,7 @@
         <v-card color="secondary" dark>
           <v-card-title class="headline primary accent--text" primary-title>
             <v-layout row>
-              <v-flex>Profile</v-flex>
+              <v-flex>Profile:</v-flex>
               <v-flex>{{ currentProfileName }}</v-flex>
             </v-layout>
           </v-card-title>
@@ -132,7 +132,34 @@
               <v-flex>New Profile</v-flex>
             </v-layout>
           </v-card-title>
-          <v-card-text></v-card-text>
+          <v-card-text>
+            <v-container>
+              <v-layout wrap>
+                <v-flex sm12 md12 xs12>
+                  <v-text-field v-model="wizard.profileName" label="Profile name"></v-text-field>
+                </v-flex>
+                <v-flex sm12 md12 xs12>
+                  <v-select
+                    v-model="wizard.serviceId"
+                    :items="serviceProviders"
+                    label="Service provider (ASP)"
+                  ></v-select>
+                </v-flex>
+                <v-flex sm12 md12 xs12>
+                  <v-select
+                    v-model="wizard.qosProfile"
+                    :items="qosProfiles"
+                    label="BNG QoS profile"
+                  ></v-select>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="accent" @click="close()">Cancel</v-btn>
+            <v-btn color="accent" @click="submitWizard()">Create</v-btn>
+          </v-card-actions>
         </v-card>
       </v-layout>
     </v-flex>
@@ -155,6 +182,43 @@
           { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 },
         ],
         ops: [':=', '==', '+=', '-='],
+        serviceProviders: [
+          { text: 'Siro', value: 5000 },
+          { text: 'Openeir', value: 5001 },
+        ],
+        qosProfiles: [
+          { text: 'U4-1', value: 'U4-1' },
+          { text: 'U7-1', value: 'U7-1' },
+          { text: 'U10-1', value: 'U10-1' },
+          { text: 'U12-1', value: 'U12-1' },
+          { text: 'U15-3', value: 'U15-3' },
+          { text: 'U18-5', value: 'U18-5' },
+          { text: 'U18-7', value: 'U18-7' },
+          { text: 'U20-8', value: 'U20-8' },
+          { text: 'U20-10', value: 'U20-10' },
+          { text: 'U25-7', value: 'U25-7' },
+          { text: 'U28-16', value: 'U28-16' },
+          { text: 'U30-8', value: 'U30-8' },
+          { text: 'U34-16', value: 'U34-16' },
+          { text: 'U40-10', value: 'U40-10' },
+          { text: 'U40-16', value: 'U40-16' },
+          { text: 'U43-16', value: 'U43-16' },
+          { text: 'U50-15', value: 'U50-15' },
+          { text: 'U50-20', value: 'U50-20' },
+          { text: 'U60-20', value: 'U60-20' },
+          { text: 'U70-20', value: 'U70-20' },
+          { text: 'U80-20', value: 'U80-20' },
+          { text: 'U85-20', value: 'U85-20' },
+          { text: 'U90-20', value: 'U90-20' },
+          { text: 'SU150-30', value: 'SU150-30' },
+          { text: 'SU350-70', value: 'SU350-70' },
+          { text: 'SU600-120', value: 'SU600-120' },
+          { text: 'SU1G-200-P', value: 'SU1G-200-P' },
+          { text: 'SU150-30-P', value: 'SU150-30-P' },
+          { text: 'SU350-70-P', value: 'SU350-70-P' },
+          { text: 'SU600-120-P', value: 'SU600-120-P' },
+          { text: 'SU1G-200-P', value: 'SU1G-200-P"' },
+        ],
         currentProfile: [],
         currentProfileName: '',
         currentProfileRow: {},
@@ -166,8 +230,8 @@
         profiles: [],
         wizard: {
           profileName: '',
-          serviceProvider: '',
-          bandWidth: '',
+          serviceId: '',
+          qosProfile: '',
         },
       };
     },
@@ -237,8 +301,23 @@
           }
         }
       },
+      async submitWizard() {
+        const { profileName, serviceId, qosProfile } = this.wizard;
+        try {
+          await this.$axios.post('profiles/wizardProfile', {
+            profileName,
+            serviceId,
+            qosProfile,
+          });
+          const { data } = await this.$axios.post('profiles/list-profiles');
+
+          this.profiles = data.pageData;
+        } catch (err) {
+          console.log(err);
+        }
+      },
       close() {
-        this.showProfile = false;
+        this.showProfile = '';
         this.cleanUpForm();
       },
     },

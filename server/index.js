@@ -14,8 +14,6 @@ app.use(require('@koa/cors')());
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
 
-
-
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
 config.dev = !(app.env === 'production')
@@ -38,18 +36,21 @@ const mysql = require('mysql2/promise');
 const multipart = require('co-busboy');
 const parse = require('co-body');
 const models = require('./models');
+
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME,
+  multipleStatements: true
+});
+
+
+const logger = require('./lib/logging');
+logger.info('Logger: Testing');
+
 async function start() {
-
-
-  const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    multipleStatements: true
-  });
-
 
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config)

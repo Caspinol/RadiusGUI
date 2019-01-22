@@ -64,7 +64,7 @@ class Nas {
     server
   }) {
 
-    const sql_update = 'UPDATE SET shortname =?, type=?, ports=?, secret=?, server=?, community=?, description=? WHERE nasname=?';
+    const sql_update = 'UPDATE nas SET shortname =?, type=?, ports=?, secret=?, server=?, community=?, description=? WHERE nasname=?';
 
     logger.log('changelog', {
       message: `Updating NAS(${nasname}) with: ${JSON.stringify({

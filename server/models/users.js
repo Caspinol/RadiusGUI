@@ -1,3 +1,5 @@
+const logger = require('../lib/logging');
+
 class Users {
 
   static async usersPage(conn, {
@@ -58,11 +60,17 @@ class Users {
       'VALUES(?, ?, ?, ?, ?);' +
       'COMMIT;';
 
+    logger.log('changelog', {
+      message: `Storing user: ${JSON.stringify(user)}`
+    });
     await conn.query(sql_delete, [user.username]);
     await conn.query(sql_insert, [
       user.username, user.value, user.username, user.groupname,
       user.ipv4_pool_name, user.ipv6_dp_pool_name, user.ipv6_nt_pool_name
     ]);
+    logger.log('changelog', {
+      message: `User: ${user.username} stored. `
+    });
   }
 
   static async deleteUser(conn, {
@@ -72,7 +80,13 @@ class Users {
       'FROM radcheck INNER JOIN radusergroup ' +
       'WHERE radcheck.username = radusergroup.username AND radcheck.username = ?;';
 
+    logger.log('changelog', {
+      message: `Deleting user: ${username}.`
+    })
     await conn.query(sql_delete, [username]);
+    logger.log('changelog', {
+      message: `User: ${username} has been deleted.`
+    })
   }
 }
 

@@ -1,3 +1,5 @@
+const logger = require('../lib/logging');
+
 class Profiles {
   static async listProfiles(conn, {
     sortBy,
@@ -30,7 +32,13 @@ class Profiles {
     await Profiles.deleteProfile(conn, {
       name
     });
+    logger.log('changelog', {
+      message: `Adding new profile: ${name} with following attributes: ${JSON.stringify(rows)}`
+    });
     await conn.query(sql_insert);
+    logger.log('changelog', {
+      message: `Profile stored.`
+    });
   }
 
   static async deleteProfile(conn, {
@@ -67,7 +75,13 @@ class Profiles {
     const sql_profile = 'INSERT INTO radgroupreply(groupname,attribute,op,value)' +
       `VALUES ('${profileName}', 'Alc-Serv-Id', ':=', ${serviceId}), ('${profileName}', 'Alc-Subsc-Prof-Str', ':=', '${subsProfile}'), ('${profileName}', 'Alc-SLA-Prof-Str', ':=', '${qosProfile} '),('${ profileName } ', 'Client - DNS - Pri', ':=', '8.8.8.8'),('${ profileName } ', 'Client - DNS - Sec', ':=', '8.8.4.4'),('${ profileName } ', 'Alc - IPv6 - Primary - Dns', ':=', '2001: bbb:: 2000'),('${ profileName } ', 'Alc - IPv6 - Secondary - Dns', ':=', '2001: bbb:: 2001')`;
 
+    logger.log('changelog', {
+      message: `Created new profile: ${profileName} with the Wizard.`
+    });
     await conn.query(sql_profile);
+    logger.log('changelog', {
+      message: `Profile stored.`
+    });
   }
 }
 

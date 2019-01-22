@@ -43,8 +43,7 @@ class MySQLTransport extends Transport {
         connection.query('INSERT INTO changelog(timestamp, severity, message) VALUES(NOW(),?,?)',
           [info.level, info.message], (err) => {
             if (err) {
-              console.log('Here', err);
-              self.emit('error', 'Failed to write changelog to database.');
+              self.emit('error', 'Failed to write changelog to database. Error: ', err);
             }
             connection.release();
           });

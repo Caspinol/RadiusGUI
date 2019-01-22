@@ -1,4 +1,5 @@
-const pkg = require('./package')
+const pkg = require('./package');
+const fs = require('fs');
 
 module.exports = {
   mode: 'universal',
@@ -63,7 +64,7 @@ module.exports = {
 
   axios: {
     credentials: false,
-    baseURL: 'http://127.0.0.1:3000/api/'
+    baseURL: 'https://localhost:8443/api/'
   },
 
   env: {

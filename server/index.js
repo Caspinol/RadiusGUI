@@ -1,6 +1,7 @@
 require('dotenv').config({
   path: 'RadiusGUI.env'
 });
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const Koa = require('koa');
 const consola = require('consola')
@@ -10,9 +11,10 @@ const {
 } = require('nuxt');
 
 const app = new Koa();
-app.use(require('@koa/cors')());
-const host = process.env.HOST || '127.0.0.1'
-const port = process.env.PORT || 3000
+app.use(require('koa2-cors')({
+  origin: '*',
+  allowMethods: ['GET', 'POST', 'DELETE']
+}));
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
@@ -47,8 +49,9 @@ const pool = mysql.createPool({
 });
 
 
-const logger = require('./lib/logging');
-logger.info('Logger: Testing');
+const spdy = require('spdy');
+const path = require('path');
+const fs = require('fs');
 
 async function start() {
 
@@ -118,11 +121,33 @@ async function start() {
     })
   })
 
-  app.listen(port, host)
-  consola.ready({
-    message: `Server listening on http://${host}:${port}`,
-    badge: true
-  })
+
+
+  const keys = {};
+  try {
+    keys.serviceKey = fs.readFileSync(path.join(process.env.SSL_KEY));
+    keys.certificate = fs.readFileSync(path.join(process.env.SSL_CERT));
+  } catch (err) {
+    console.log('Failed to read certificate files: ', err);
+    process.exit();
+  }
+
+  const credentials = {
+    key: keys.serviceKey,
+    cert: keys.certificate
+  };
+
+
+  const server = spdy.createServer(credentials, app.callback());
+  const port = process.env.SSL_PORT || 8443;
+  const host = process.env.HOST || 'localhost'
+
+  server.listen(port, host, () => {
+    consola.ready({
+      message: `Server listening on https://${host}:${port}`,
+      badge: true
+    });
+  });
 }
 
-start()
+start();

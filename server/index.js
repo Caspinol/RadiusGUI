@@ -4,7 +4,7 @@ require('dotenv').config({
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const Koa = require('koa');
-const consola = require('consola')
+const consola = require('consola');
 const {
   Nuxt,
   Builder
@@ -17,20 +17,20 @@ app.use(require('koa2-cors')({
 }));
 
 // Import and Set Nuxt.js options
-let config = require('../nuxt.config.js')
-config.dev = !(app.env === 'production')
+let config = require('../nuxt.config.js');
+config.dev = !(app.env === 'production');
 
 const path2method = (path) => {
-  path = path.split('-')
+  path = path.split('-');
   if (path.length === 1) {
-    return path[0]
+    return path[0];
   } else if (path.length > 1) {
     const parts = path.slice(1).map((part) => {
-      return `${part[0].toUpperCase()}${part.slice(1)}`
-    })
-    return `${path[0]}${parts.join('')}`
+      return `${part[0].toUpperCase()}${part.slice(1)}`;
+    });
+    return `${path[0]}${parts.join('')}`;
   } else {
-    return path
+    return path;
   }
 }
 
@@ -54,14 +54,14 @@ const path = require('path');
 const fs = require('fs');
 
 async function start() {
-
+  
   // Instantiate nuxt.js
-  const nuxt = new Nuxt(config)
+  const nuxt = new Nuxt(config);
 
   // Build in development
   if (config.dev) {
-    const builder = new Builder(nuxt)
-    await builder.build()
+    const builder = new Builder(nuxt);
+    await builder.build();
   }
 
   app.use(require('koa-helmet')());
@@ -100,10 +100,11 @@ async function start() {
       let conn = null;
       try {
         conn = await pool.getConnection();
-        ctx.body = await models[model][method](conn, ctx.json)
-        conn.release();
+        ctx.body = await models[model][method](conn, ctx.json);
       } catch (e) {
         console.error('Lost access to database.', e);
+      } finally {
+        conn.release();
       }
     }
   })

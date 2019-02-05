@@ -13,7 +13,7 @@ class Profiles {
     const [data] = await conn.query(sql);
     return {
       pageData: data,
-    }
+    };
   }
 
   static async saveProfile(conn, {

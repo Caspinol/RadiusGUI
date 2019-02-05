@@ -13,11 +13,16 @@ class Ippools {
     if (searchString) {
       optionalSearch = ` WHERE pool_name LIKE '%${searchString}%' OR framedipaddress LIKE '%${searchString}%' OR framedipmask LIKE '%${searchString}%' OR gateway_ip LIKE '%${searchString}%' OR nasipaddress LIKE '%${searchString}%' OR username LIKE '%${searchString}%' OR callingstationid LIKE '%${searchString}%' `;
     }
+
+	let sql_pagesize = '';
+	if(Number(size) > 0){
+	  sql_pagesize = `LIMIT ${size} OFFSET ${(page - 1) * size}`;
+	}
 	
-    let sql_IPs = `SELECT * FROM radippool ${optionalSearch}  ORDER BY ${sortBy} ${order} LIMIT ? OFFSET ?;`;
+    let sql_IPs = `SELECT * FROM radippool ${optionalSearch}  ORDER BY ${sortBy} ${order} ${sql_pagesize};`;
     let sql_count = `SELECT COUNT(id) as count FROM radippool ${optionalSearch};`;
 	
-    const [ip_pools] = await conn.query(sql_IPs, [size, (page - 1) * size]);
+    const [ip_pools] = await conn.query(sql_IPs);
     const [count] = await conn.query(sql_count);
 	
     return {

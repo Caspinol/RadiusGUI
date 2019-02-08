@@ -63,11 +63,23 @@ class Users {
     logger.log('changelog', {
       message: `Storing user: ${JSON.stringify(user)}`
     });
-    await conn.query(sql_delete, [user.username]);
-    await conn.query(sql_insert, [
-      user.username, user.value, user.username, user.groupname,
-      user.ipv4_pool_name, user.ipv6_dp_pool_name, user.ipv6_nt_pool_name
-    ]);
+	user = Object.assign({
+	  username: '',
+	  groupname: 'none',
+	  ipv4_pool_name:'none',
+	  ipv6_dp_pool_name:'none',
+	  ipv6_nt_pool_name:'none'
+	}, user);
+
+	try{
+      await conn.query(sql_delete, [user.username]);
+      await conn.query(sql_insert, [
+		user.username, user.value, user.username, user.groupname,
+		user.ipv4_pool_name, user.ipv6_dp_pool_name, user.ipv6_nt_pool_name
+      ]);
+	}catch(e){
+	  console.log(e);
+	}
     logger.log('changelog', {
       message: `User: ${user.username} stored. `
     });

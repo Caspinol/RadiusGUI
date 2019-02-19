@@ -1,8 +1,8 @@
 class Dashboard {
-
   static async showDashboard(conn) {
     // Get 5 guys with the most traffic
-    const sql_top_traffic = 'SELECT ' +
+    const sql_top_traffic =
+      'SELECT ' +
       'radacctid,username,framedipaddress,acctinputoctets,acctoutputoctets ' +
       'FROM radacct ' +
       'where username!="" AND acctstoptime IS NULL AND acctsessiontime >0 ' +
@@ -15,8 +15,8 @@ class Dashboard {
 
     return {
       last_logins,
-      big_traffic_users
-    }
+      big_traffic_users,
+    };
   }
 }
 

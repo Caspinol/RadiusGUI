@@ -23,7 +23,7 @@
       >
         <template slot="items" slot-scope="props">
           <tr
-            :style="{color: props.item.acctstoptime?'grey':'green'}"
+            :style="{ color: props.item.acctstoptime ? 'grey' : 'green' }"
             class="clickable"
             @click="props.expanded = !props.expanded"
           >
@@ -42,7 +42,8 @@
                 <v-icon
                   slot="activator"
                   @click.stop="showTooltip(props.item.clientmac)"
-                >chrome_reader_mode</v-icon>
+                  >chrome_reader_mode</v-icon
+                >
               </v-tooltip>
             </td>
           </tr>
@@ -90,12 +91,9 @@
           </v-card>
         </template>
         <template slot="no-data">
-          <v-alert
-            :value="true"
-            color="warning"
-            icon="new_releases"
-            outline
-          >There was an issue fetching accounting data.</v-alert>
+          <v-alert :value="true" color="warning" icon="new_releases" outline
+            >There was an issue fetching accounting data.</v-alert
+          >
         </template>
       </v-data-table>
     </v-flex>
@@ -103,136 +101,134 @@
 </template>
 
 <script>
-  import { formatDate, sec2HHMMSS, randomString } from '../utils';
-  export default {
-    data() {
-      return {
-        headers: [
-          {
-            text: 'Session ID',
-            value: 'acctsessionid',
-            sortable: false,
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'Username',
-            value: 'username',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'IPv4',
-            value: 'framedipaddress',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'IPv6 NT',
-            value: 'framedipv6address',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'IPv6 DP',
-            value: 'ipv6delegatedpfx',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'Download',
-            value: 'acctinputoctets',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'Upload',
-            value: 'acctoutputoctets',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'SLA profile',
-            value: 'slaprofile',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'User profile',
-            value: 'subscprofile',
-            class: ['secondary', 'accent--text'],
-          },
-          {
-            text: 'Action',
-            value: '',
-            class: ['secondary'],
-          },
-        ],
-        pagination: {
-          rowsPerPage: 10,
-          sortBy: 'acctstarttime',
-          searchString: '',
+import { formatDate, sec2HHMMSS, randomString } from '../utils';
+export default {
+  data() {
+    return {
+      headers: [
+        {
+          text: 'Session ID',
+          value: 'acctsessionid',
+          sortable: false,
+          class: ['secondary', 'accent--text'],
         },
-        loading: false,
-        accounting: [],
-        accCount: 0,
-        isOnline: false,
-        tooltip: false,
-        showInKibana: '',
-      };
-    },
-    watch: {
+        {
+          text: 'Username',
+          value: 'username',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'IPv4',
+          value: 'framedipaddress',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'IPv6 NT',
+          value: 'framedipv6address',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'IPv6 DP',
+          value: 'ipv6delegatedpfx',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'Download',
+          value: 'acctinputoctets',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'Upload',
+          value: 'acctoutputoctets',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'SLA profile',
+          value: 'slaprofile',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'User profile',
+          value: 'subscprofile',
+          class: ['secondary', 'accent--text'],
+        },
+        {
+          text: 'Action',
+          value: '',
+          class: ['secondary'],
+        },
+      ],
       pagination: {
-        async handler() {
-          const {
+        rowsPerPage: 10,
+        sortBy: 'acctstarttime',
+        searchString: '',
+      },
+      loading: false,
+      accounting: [],
+      accCount: 0,
+      isOnline: false,
+      tooltip: false,
+      showInKibana: '',
+    };
+  },
+  watch: {
+    pagination: {
+      async handler() {
+        const {
+          page,
+          rowsPerPage,
+          sortBy,
+          descending,
+          searchString,
+        } = this.pagination;
+
+        if (!searchString || searchString.length >= 3) {
+          this.loading = true;
+          const { data } = await this.$axios.post('accounting/showAccounting', {
             page,
-            rowsPerPage,
+            size: rowsPerPage,
             sortBy,
             descending,
             searchString,
-          } = this.pagination;
-
-          if (!searchString || searchString.length >= 3) {
-            this.loading = true;
-            const { data } = await this.$axios.post('accounting/showAccounting', {
-              page,
-              size: rowsPerPage,
-              sortBy,
-              descending,
-              searchString,
-            });
-            this.accounting = data.pageData;
-            this.accCount = data.total_count;
-            this.loading = false;
-          }
-        },
-        deep: true,
+          });
+          this.accounting = data.pageData;
+          this.accCount = data.total_count;
+          this.loading = false;
+        }
       },
+      deep: true,
     },
-    methods: {
-      formatDateStamp: formatDate,
-      formatTime: sec2HHMMSS,
-      randomString: randomString,
-      showTooltip(mac) {
-        const url = `${
-          this.elkHost
-        }/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(_source),index:AWFn3hy34NBPYG__wnEF,interval:auto,query:(query_string:(query:'mac_address:"${mac}"')),sort:!('@timestamp',desc))`;
+  },
+  methods: {
+    formatDateStamp: formatDate,
+    formatTime: sec2HHMMSS,
+    randomString: randomString,
+    showTooltip(mac) {
+      const url = `${
+        this.elkHost
+      }/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(_source),index:AWFn3hy34NBPYG__wnEF,interval:auto,query:(query_string:(query:'mac_address:"${mac}"')),sort:!('@timestamp',desc))`;
 
-        window.open(url, '_blank');
-      },
+      window.open(url, '_blank');
     },
-    async asyncData({ app }) {
-      const { data } = await app.$axios.post('accounting/showAccounting', {
-        page: 1,
-        size: 10,
-        sortBy: 'acctstarttime',
-      });
+  },
+  async asyncData({ app }) {
+    const { data } = await app.$axios.post('accounting/showAccounting', {
+      page: 1,
+      size: 10,
+      sortBy: 'acctstarttime',
+    });
 
-      return {
-        accounting: data.pageData,
-        accCount: data.total_count,
-        elkHost: process.env.ELK_HOST,
-      };
-    },
-  };
+    return {
+      accounting: data.pageData,
+      accCount: data.total_count,
+      elkHost: process.env.ELK_HOST,
+    };
+  },
+};
 </script>
 
 <style lang="css" scoped>
-  .clickable {
-    cursor: pointer;
-  }
+.clickable {
+  cursor: pointer;
+}
 </style>
-
-

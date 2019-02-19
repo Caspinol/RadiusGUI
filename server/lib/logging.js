@@ -1,7 +1,5 @@
 const winston = require('winston');
 const Transport = require('winston-transport');
-
-
 const mysql = require('mysql2');
 
 // The changelog will store in db only the logs related to modyfying the DB content
@@ -28,29 +26,31 @@ class MySQLTransport extends Transport {
     });
     this.name = 'changelog';
   }
-
+  
   log(info, callback) {
-
+	
     const self = this;
     /* Perform the database write only for changelog severity */
     if (info.level === 'changelog') {
-
+	  
       this.pool.getConnection((err, connection) => {
         if (err) {
           console.log('Getting connection ', err);
           self.emit('error', 'Failed obtain database connection for changelog.');
         }
         connection.query('INSERT INTO changelog(timestamp, severity, message) VALUES(NOW(),?,?)',
-          [info.level, info.message], (err) => {
-            if (err) {
-              self.emit('error', 'Failed to write changelog to database. Error: ', err);
-            }
-            connection.release();
-          });
+						 [info.level, info.message], (err) => {
+						   if (err) {
+							 self.emit('error', 'Failed to write changelog to database. Error: ',
+									   err);
+						   }
+						   connection.release();
+						 });
       });
     }
-    if (callback && typeof callback === "function")
-      callback()
+    if (callback && typeof callback === "function"){
+      callback();
+	}
   }
 }
 

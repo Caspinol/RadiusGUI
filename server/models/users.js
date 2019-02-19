@@ -18,17 +18,23 @@ class Users {
       optionalSearch =
         `AND (rc.username LIKE '%${searchString}%' OR groupname LIKE '%${searchString}%' OR ipv4_pool_name LIKE '%${searchString}%' OR ipv6_dp_pool_name LIKE '%${searchString}%' OR  ipv6_nt_pool_name LIKE '%${searchString}%') `;
     }
+
+	let sql_pagesize = '';
+	if(Number(size) > 0){
+	  sql_pagesize = `LIMIT ${size} OFFSET ${(page - 1) * size}`;
+	}
+	
     const sql_users = 'SELECT rug.username, rc.value, groupname, ipv4_pool_name, ipv6_dp_pool_name, ipv6_nt_pool_name, created_at ' +
 		  'FROM radusergroup as rug ' +
 		  'JOIN radcheck as rc ' +
 		  'WHERE rc.username = rug.username ' +
 		  ` ${optionalSearch} ` +
-		  `ORDER BY rug.${sortBy} ${order} LIMIT ? OFFSET ?;`;
+		  `ORDER BY rug.${sortBy} ${order} ${sql_pagesize};`;
 
     const sql_count = `SELECT COUNT(rc.username) as count FROM radusergroup AS rug ` +
 		  `JOIN radcheck AS rc WHERE rc.username = rug.username ${ optionalSearch };`;
     const [count] = await conn.query(sql_count);
-    const [users] = await conn.query(sql_users, [size, (page - 1) * size]);
+    const [users] = await conn.query(sql_users);
     return {
       total_count: count[0].count,
       pageData: users

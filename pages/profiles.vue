@@ -306,20 +306,40 @@ export default {
       this.close();
     },
     async deleteProfile(item) {
-      if (confirm(`Do you really wish to remove ${item.groupname}?`)) {
-        if (item.count > 0) {
-          this.$snotify['warning'](
-            'Cannot remove profile that has been assigned to subscriber.',
-            'Profile in use!'
-          );
-        } else {
-          await this.$store.dispatch('profile/deleteProfile', item);
-          this.$snotify[this.getResult.result](
-            this.getResult.message,
-            this.getResult.title
-          );
+      this.$snotify.confirm(
+        `Do you really wish to remove ${item.groupname}?`,
+        'Confirm',
+        {
+          buttons: [
+            {
+              text: 'Yes',
+              action: async toast => {
+                if (item.count > 0) {
+                  this.$snotify['warning'](
+                    'Cannot remove profile that has been assigned to subscriber.',
+                    'Profile in use!'
+                  );
+                } else {
+                  await this.$store.dispatch('profile/deleteProfile', item);
+                  this.$snotify[this.getResult.result](
+                    this.getResult.message,
+                    this.getResult.title
+                  );
+                }
+                this.$snotify.remove(toast.id);
+              },
+              bold: false,
+            },
+            {
+              text: 'No',
+              action: toast => {
+                this.$snotify.remove(toast.id);
+              },
+              bold: true,
+            },
+          ],
         }
-      }
+      );
     },
     async submitWizard() {
       await this.$store.dispatch('profile/submitWizard', this.wizard);

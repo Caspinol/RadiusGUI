@@ -222,14 +222,29 @@ export default {
       this.dialog = true;
     },
     async deleteItem(item) {
-      if (confirm(`Really delete [${item.username}] ?`)) {
-        await this.$store.dispatch('users/deleteUser', item);
-        this.$snotify[this.getResult.result](
-          this.getResult.message,
-          this.getResult.title
-        );
-        this.dialog = false;
-      }
+      this.$snotify.confirm(`Really delete [${item.username}] ?`, 'Confirm', {
+        buttons: [
+          {
+            text: 'Yes',
+            action: async toast => {
+              await this.$store.dispatch('users/deleteUser', item);
+              this.$snotify[this.getResult.result](
+                this.getResult.message,
+                this.getResult.title
+              );
+              this.dialog = false;
+              this.$snotify.remove(toast.id);
+            },
+            bold: false,
+          },
+          {
+            text: 'No',
+            action: toast => {
+              this.$snotify.remove(toast.id);
+            },
+          },
+        ],
+      });
     },
     close() {
       this.editedItem = {};

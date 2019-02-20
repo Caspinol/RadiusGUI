@@ -9,15 +9,14 @@ module.exports = {
     return new Promise((resolve, reject) => {
       exec('ps', args, (err, stdout) => {
         if (err) reject(err);
-        stdout.split('\n').forEach((l) => {
+        stdout.split('\n').forEach(l => {
           const ll = l.toLowerCase();
-          if (ll.indexOf('radiusd') > -1) {
-			console.log('Line: ', l);
+          if (ll.indexOf(process_name) > -1) {
             resolve(true);
           }
         });
         resolve(false);
       });
     });
-  }
+  },
 };

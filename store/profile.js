@@ -55,6 +55,9 @@ export const mutations = {
 
   FETCH_PROFILES_SUCCESS(state, profiles) {
     state.profiles = profiles;
+    state.result = 'success';
+    state.message = '';
+    state.title = 'Success!';
   },
 
   FETCH_PROFILES_FAIL(state) {
@@ -149,6 +152,16 @@ export const actions = {
       });
     } catch (e) {
       commit('DELETE_PROFILE_FAIL');
+    }
+  },
+
+  async submitWizard({ commit }, wizardData) {
+    try {
+      await this.$axios.post('profiles/wizardProfile', wizardData);
+      const { data } = await this.$axios.post('profiles/list-profiles');
+      commit('FETCH_PROFILES_SUCCESS', data.pageData);
+    } catch (err) {
+      commit('SAVE_PROFILE_FAIL');
     }
   },
 };

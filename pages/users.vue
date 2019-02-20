@@ -6,17 +6,23 @@
           <v-dialog slot="activator" v-model="dialog" max-width="800px" dark>
             <v-btn slot="activator" color="accent" class="mb-2">New User</v-btn>
             <v-card color="secondary" dark>
-              <v-card-title
-				class="headline primary accent--text" primary-title>User</v-card-title>
+              <v-card-title class="headline primary accent--text" primary-title
+                >User</v-card-title
+              >
               <v-card-text>
                 <v-container grid-list-md>
                   <v-layout wrap>
                     <v-flex xs12 sm12 md6>
                       <v-text-field
-						v-model="editedItem.username" label="Username"></v-text-field>
+                        v-model="editedItem.username"
+                        label="Username"
+                      ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm12 md6>
-                      <v-text-field v-model="editedItem.value" label="Password"></v-text-field>
+                      <v-text-field
+                        v-model="editedItem.value"
+                        label="Password"
+                      ></v-text-field>
                     </v-flex>
                     <v-flex xs12 sm12 md6>
                       <v-select
@@ -26,7 +32,7 @@
                         item-value="groupname"
                         label="Profile"
                         required
-						></v-select>
+                      ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md6>
                       <v-select
@@ -35,7 +41,7 @@
                         item-text="pool_name"
                         item-value="pool_name"
                         label="IPv4 pool"
-						></v-select>
+                      ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md6>
                       <v-select
@@ -45,7 +51,7 @@
                         item-value="pool_name"
                         label="IPv6 DP pool"
                         class="wrapped"
-						></v-select>
+                      ></v-select>
                     </v-flex>
                     <v-flex xs12 sm12 md6>
                       <v-select
@@ -55,7 +61,7 @@
                         item-value="pool_name"
                         label="IPv6 NT pool"
                         class="wrapped"
-						></v-select>
+                      ></v-select>
                     </v-flex>
                   </v-layout>
                 </v-container>
@@ -80,7 +86,7 @@
           dark
           prepend-inner-icon="search"
           clearable
-          ></v-text-field>
+        ></v-text-field>
       </v-flex>
     </v-layout>
     <v-data-table
@@ -91,7 +97,7 @@
       :loading="loading"
       item-key="username"
       class="elevation-5"
-      >
+    >
       <template slot="items" slot-scope="props">
         <tr>
           <td class="wrapped">{{ props.item.username }}</td>
@@ -102,8 +108,16 @@
           <td class="wrapped">{{ props.item.ipv6_nt_pool_name }}</td>
           <td>{{ formatTimeStamp(props.item.created_at) }}</td>
           <td class="justify-center layout px-0">
-            <v-icon small color="accent" class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small color="accent" @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon
+              small
+              color="accent"
+              class="mr-2"
+              @click="editItem(props.item)"
+              >edit</v-icon
+            >
+            <v-icon small color="accent" @click="deleteItem(props.item)"
+              >delete</v-icon
+            >
           </td>
         </tr>
       </template>
@@ -113,7 +127,7 @@
 
 <script>
 import { formatDate } from '../utils';
-import { mapGetters } from 'vuex'
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -172,16 +186,16 @@ export default {
       loading: false,
     };
   },
-  computed:{
-	...mapGetters({
-	  getUsers: 'users/getUsers',
-	  getUserCount: 'users/getUserCount',
-	  getProfiles: 'users/getProfiles',
-	  getIpv4Pools: 'users/getIpv4Pools',
-	  getIpv6PDPools: 'users/getIpv6PDPools',
-	  getIpv6NTPools: 'users/getIpv6NTPools',
-	  getResult: 'users/getResult'
-	})
+  computed: {
+    ...mapGetters({
+      getUsers: 'users/getUsers',
+      getUserCount: 'users/getUserCount',
+      getProfiles: 'users/getProfiles',
+      getIpv4Pools: 'users/getIpv4Pools',
+      getIpv6PDPools: 'users/getIpv6PDPools',
+      getIpv6NTPools: 'users/getIpv6NTPools',
+      getResult: 'users/getResult',
+    }),
   },
   watch: {
     dialog: {
@@ -191,60 +205,54 @@ export default {
     },
     pagination: {
       async handler() {
-        const {
-          page,
-          rowsPerPage,
-          sortBy,
-          descending,
-          searchString,
-        } = this.pagination;
+        const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
           this.loading = true;
-          await this.$store.dispatch('users/fetchUsers', {
-            page,
-            size: rowsPerPage,
-            sortBy,
-            descending,
-            searchString,
-          });
+          await this.$store.dispatch('users/fetchUsers', this.pagination);
           this.loading = false;
-		}
-	  },
-	  deep: true,
+        }
+      },
+      deep: true,
     },
   },
   methods: {
     formatTimeStamp: formatDate,
     editItem(item) {
-	  this.editedItem = Object.assign({}, item);
-	  this.dialog = true;
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
     async deleteItem(item) {
-	  if (confirm(`Really delete [${item.username}] ?`)) {
+      if (confirm(`Really delete [${item.username}] ?`)) {
         await this.$store.dispatch('users/deleteUser', item);
-		this.$snotify[this.getResult.result](this.getResult.message, this.getResult.title);
-		this.dialog = false;
-	  }
+        this.$snotify[this.getResult.result](
+          this.getResult.message,
+          this.getResult.title
+        );
+        this.dialog = false;
+      }
     },
     close() {
-	  this.editedItem = {};
-	  this.dialog = false;
+      this.editedItem = {};
+      this.dialog = false;
     },
     async saveItem(item) {
-	  await this.$store.dispatch('users/saveUser', item);
-	  this.$snotify[this.getResult.result](this.getResult.message, this.getResult.title);
-	  this.editedItem = {};
-	  this.dialog = false;
+      await this.$store.dispatch('users/saveUser', item);
+      this.$snotify[this.getResult.result](
+        this.getResult.message,
+        this.getResult.title
+      );
+      this.editedItem = {};
+      this.dialog = false;
     },
-  }
+  },
 };
 </script>
 
 <style scoped>
 .wrapped {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    hyphens: auto;
-    word-break: break-all;
-  }
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+  word-break: break-all;
+}
 </style>

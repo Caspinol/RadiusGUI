@@ -205,7 +205,7 @@ export default {
     randomString: randomString,
     showTooltip(mac) {
       const url = `${
-        this.elkHost
+        process.env.ELK_HOST
       }/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(_source),index:AWFn3hy34NBPYG__wnEF,interval:auto,query:(query_string:(query:'mac_address:"${mac}"')),sort:!('@timestamp',desc))`;
 
       window.open(url, '_blank');
@@ -221,7 +221,6 @@ export default {
     return {
       accounting: data.pageData,
       accCount: data.total_count,
-      elkHost: process.env.ELK_HOST,
     };
   },
 };

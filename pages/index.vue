@@ -1,13 +1,13 @@
-<template>		
+<template>
   <v-layout row wrap>
     <v-flex xs12 sm6 md6>
-      <LastLogins :items="last_logins"/>
+      <LastLogins :items="last_logins" />
     </v-flex>
     <v-flex xs12 sm6 md6>
-      <IpPools/>
+      <IpPools />
     </v-flex>
     <v-flex xs12 sm12 md12>
-      <TopXList :items="big_traffic_users"/>
+      <TopXList :items="big_traffic_users" />
     </v-flex>
   </v-layout>
 </template>
@@ -19,17 +19,20 @@ import IpPools from '../components/dashboard/IpPools';
 
 export default {
   components: {
-	LastLogins,
-	TopXList,
-	IpPools,
+    LastLogins,
+    TopXList,
+    IpPools,
   },
   async asyncData({ app }) {
-	const { data } = await app.$axios.post('dashboard/show-dashboard');
-	return { last_logins: data.last_logins, big_traffic_users: data.big_traffic_users };
+    const { data } = await app.$axios.post('dashboard/show-dashboard');
+    return {
+      last_logins: data.last_logins,
+      big_traffic_users: data.big_traffic_users,
+    };
   },
-  
+
   data() {
-	return {
+    return {
       last_logins: [],
       big_traffic_users: [],
       pools: [],

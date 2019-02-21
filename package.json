@@ -2,7 +2,7 @@
   "name": "RadiusGUI",
   "version": "1.0.0",
   "description": "FreeRADIUS server management tool",
-  "author": "Krzysztof Grobelak &lt;krzysztof.grobelak@gmail.com&gt;",
+  "author": "Krzysztof Grobelak <krzysztof.grobelak@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",

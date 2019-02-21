@@ -13,8 +13,8 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="accounting"
-        :total-items="accCount"
+        :items="getAccounting"
+        :total-items="getAccCount"
         :pagination.sync="pagination"
         :loading="loading"
         item-key="acctsessionid"
@@ -90,11 +90,6 @@
             </v-layout>
           </v-card>
         </template>
-        <template slot="no-data">
-          <v-alert :value="true" color="warning" icon="new_releases" outline
-            >There was an issue fetching accounting data.</v-alert
-          >
-        </template>
       </v-data-table>
     </v-flex>
   </v-layout>
@@ -102,6 +97,8 @@
 
 <script>
 import { formatDate, sec2HHMMSS, randomString } from '../utils';
+import { mapGetters } from 'vuex';
+
 export default {
   data() {
     return {
@@ -164,35 +161,35 @@ export default {
         searchString: '',
       },
       loading: false,
-      accounting: [],
-      accCount: 0,
-      isOnline: false,
       tooltip: false,
-      showInKibana: '',
     };
+  },
+  computed: {
+    ...mapGetters({
+      getAccounting: 'accounting/getAccounting',
+      getAccCount: 'accounting/getAccCount',
+      getResult: 'accounting/getResult',
+    }),
   },
   watch: {
     pagination: {
       async handler() {
-        const {
-          page,
-          rowsPerPage,
-          sortBy,
-          descending,
-          searchString,
-        } = this.pagination;
+        const { searchString } = this.pagination;
 
         if (!searchString || searchString.length >= 3) {
           this.loading = true;
-          const { data } = await this.$axios.post('accounting/showAccounting', {
-            page,
-            size: rowsPerPage,
-            sortBy,
-            descending,
-            searchString,
-          });
-          this.accounting = data.pageData;
-          this.accCount = data.total_count;
+
+          await this.$store.dispatch(
+            'accounting/showAccounting',
+            this.pagination
+          );
+
+          if (this.getResult.result) {
+            this.$snotify[this.getResult.result](
+              this.getResult.message,
+              this.getResult.title
+            );
+          }
           this.loading = false;
         }
       },
@@ -210,18 +207,6 @@ export default {
 
       window.open(url, '_blank');
     },
-  },
-  async asyncData({ app }) {
-    const { data } = await app.$axios.post('accounting/showAccounting', {
-      page: 1,
-      size: 10,
-      sortBy: 'acctstarttime',
-    });
-
-    return {
-      accounting: data.pageData,
-      accCount: data.total_count,
-    };
   },
 };
 </script>

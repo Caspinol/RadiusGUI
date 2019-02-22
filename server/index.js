@@ -1,7 +1,6 @@
 require('dotenv').config({
   path: 'RadiusGUI.env',
 });
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 const Koa = require('koa');
 const consola = require('consola');
@@ -47,10 +46,6 @@ const pool = mysql.createPool({
   multipleStatements: true,
 });
 
-const spdy = require('spdy');
-const path = require('path');
-const fs = require('fs');
-
 async function start() {
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config);
@@ -80,6 +75,7 @@ async function start() {
         ctx.json = await parse.json(ctx);
       } catch (err) {
         ctx.json = null;
+        console.log(err);
       }
       await next();
     }
@@ -129,27 +125,13 @@ async function start() {
     });
   });
 
-  const keys = {};
-  try {
-    keys.serviceKey = fs.readFileSync(path.join(process.env.SSL_KEY));
-    keys.certificate = fs.readFileSync(path.join(process.env.SSL_CERT));
-  } catch (err) {
-    console.log('Failed to read certificate files: ', err);
-    process.exit();
-  }
+  const port = process.env.PORT || 3000;
+  const host = process.env.HOST || '0.0.0.0';
 
-  const credentials = {
-    key: keys.serviceKey,
-    cert: keys.certificate,
-  };
-
-  const server = spdy.createServer(credentials, app.callback());
-  const port = process.env.SSL_PORT || 8443;
-  const host = process.env.HOST || 'localhost';
-
-  server.listen(port, host, () => {
+  const http = require('http');
+  http.createServer(app.callback()).listen(port, host, () => {
     consola.ready({
-      message: `Server listening on https://${host}:${port}`,
+      message: `Server listening on http://${host}:${port}`,
       badge: true,
     });
   });

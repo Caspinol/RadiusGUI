@@ -3,23 +3,41 @@ const os = require('os');
 
 class Utils {
   static async getServerStatus() {
+    let res = null;
+    try {
+      res = await proc.isRunning('radiusd');
+    } catch (err) {
+      console.log(err);
+    }
     return {
-      isRunning: await proc.isRunning('radiusd'),
+      isRunning: res || false,
     };
   }
 
   static async getDbStatus(conn) {
+    let res = null;
+    try {
+      res = await conn.query('SELECT user()');
+    } catch (err) {
+      console.log(err);
+    }
     return {
-      isRunning: await conn.query('SELECT user()'),
+      isRunning: res || false,
     };
   }
 
   static async getPools(conn) {
     const sql_query = `SELECT  pool_name, SUM( CASE WHEN t.username <>'' THEN 1 ELSE 0 END) AS used, SUM( CASE WHEN t.username = '' then 1 else 0 end) as free FROM radius.radippool t where pool_name like '%_Dynamic' group by pool_name`;
 
-    const [pools] = await conn.query(sql_query);
+    let p = null;
+    try {
+      const [pools] = await conn.query(sql_query);
+      p = pools;
+    } catch (err) {
+      console.log(err);
+    }
     return {
-      pools,
+      pools: p,
     };
   }
 
@@ -34,6 +52,9 @@ class Utils {
 
 function formatInMb(size) {
   const units = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (size == 0) {
+    size++;
+  }
   const i = parseInt(Math.floor(Math.log(size) / Math.log(1024)));
   return Math.round(size / Math.pow(1024, i), 2) + ' ' + units[i];
 }

@@ -23,13 +23,6 @@ export default {
     TopXList,
     IpPools,
   },
-  async asyncData({ app }) {
-    const { data } = await app.$axios.post('dashboard/show-dashboard');
-    return {
-      last_logins: data.last_logins,
-      big_traffic_users: data.big_traffic_users,
-    };
-  },
 
   data() {
     return {
@@ -37,6 +30,18 @@ export default {
       big_traffic_users: [],
       pools: [],
     };
+  },
+
+  async created() {
+    let d = null;
+    try {
+      const { data } = await this.$axios.post('dashboard/show-dashboard');
+      d = data;
+    } catch (err) {
+      console.log(err);
+    }
+    this.last_logins = d.last_logins;
+    this.big_traffic_users = d.big_traffic_users;
   },
 };
 </script>

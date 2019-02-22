@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  nuxt:
+    build: .
+    container_name: radius_gui
+    restart: always
+    ports:
+      - "3000:3000"
+    command:
+      "npm run start"
+
+  nginx:
+    image: nginx:latest
+    container_name: radius_gui_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - nuxt

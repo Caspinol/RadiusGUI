@@ -1,7 +1,3 @@
-require('dotenv').config({
-  path: 'RadiusGUI.env',
-});
-
 const pkg = require('./package');
 
 module.exports = {
@@ -66,12 +62,12 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
 
   axios: {
-    credentials: false,
-    baseURL: process.env.BASE_URL,
-  },
-
-  env: {
-    ELK_HOST: process.env.ELK_HOST,
+    baseURL: 'https://192.168.0.87/api/',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
+    },
   },
 
   /*

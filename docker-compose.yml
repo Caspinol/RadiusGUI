@@ -2,20 +2,37 @@ version: "3"
 
 services:
   nuxt:
-    build: .
+    env_file:
+      - ./RadiusGUI.env
     container_name: radius_gui
+    build:
+      context: "./app"
+      dockerfile: "Dockerfile"
     restart: always
+    networks:
+        - radius_network
     ports:
       - "3000:3000"
     command:
-      "npm run start"
+       "npm run start"
 
   nginx:
-    image: nginx:latest
     container_name: radius_gui_nginx
+    build:
+      context: "./nginx"
+      dockerfile: "Dockerfile"
+      args:
+         confname: "nginx.conf"
+    networks:
+        radius_network:
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/certs/cert.crt:/etc/nginx/ssl/cert.crt
+      - ./nginx/certs/cert.key:/etc/nginx/ssl/cert.key
     depends_on:
-      - nuxt
+       - nuxt
+
+networks:
+    radius_network:

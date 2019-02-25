@@ -16,7 +16,9 @@ import { mapGetters } from 'vuex';
 
 export default {
   data() {
-    return {};
+    return {
+      timer: null,
+    };
   },
   computed: {
     ...mapGetters({
@@ -28,22 +30,23 @@ export default {
   },
   created() {
     this.update();
+    this.timer = setInterval(
+      function() {
+        this.update();
+      }.bind(this),
+      20000
+    );
   },
   methods: {
-    async update() {
-      await this.$store.dispatch('utils/getHostStats');
-      if (this.getResult.result) {
-        this.$snotify[this.getResult.result](
-          this.getResult.message,
-          this.getResult.title
-        );
-      }
-      await new Promise(async resolve =>
-        setTimeout(async () => {
-          await this.update();
-          resolve();
-        }, 20000)
-      );
+    update() {
+      this.$store.dispatch('utils/getHostStats').catch(() => {
+        if (this.getResult.result) {
+          this.$snotify[this.getResult.result](
+            this.getResult.message,
+            this.getResult.title
+          );
+        }
+      });
     },
   },
 };

@@ -1,14 +1,16 @@
-FROM node:11.0
+FROM node:alpine
 
-ENV APP_ROOT /radius_gui_app
+ENV APP_ROOT /radius_gui
 
 RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 ADD . ${APP_ROOT}
+
+ENV HOST 0.0.0.0
+ENV NODE_ENV production
 
 RUN npm install
 RUN npm run build
 
 EXPOSE 3000
 
-ENV HOST 0.0.0.0

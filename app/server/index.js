@@ -1,7 +1,3 @@
-require('dotenv').config({
-  path: 'RadiusGUI.env',
-});
-
 const Koa = require('koa');
 const consola = require('consola');
 const { Nuxt, Builder } = require('nuxt');
@@ -36,6 +32,8 @@ const mysql = require('mysql2/promise');
 const multipart = require('co-busboy');
 const parse = require('co-body');
 const models = require('./models');
+
+console.log(process.env.DB_HOST);
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -75,7 +73,7 @@ async function start() {
         ctx.json = await parse.json(ctx);
       } catch (err) {
         ctx.json = null;
-        console.log(err);
+        console.error(err);
       }
       await next();
     }

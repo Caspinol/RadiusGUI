@@ -33,15 +33,15 @@ export default {
   },
 
   async created() {
-    let d = null;
+    let d = {};
     try {
       const { data } = await this.$axios.post('dashboard/show-dashboard');
       d = data;
     } catch (err) {
-      console.log(err);
+      console.log('Dashboard: ', err);
     }
-    this.last_logins = d.last_logins;
-    this.big_traffic_users = d.big_traffic_users;
+    this.last_logins = d.last_logins || [];
+    this.big_traffic_users = d.big_traffic_users || [];
   },
 };
 </script>

@@ -7,7 +7,7 @@ class Utils {
     try {
       res = await proc.isRunning('radiusd');
     } catch (err) {
-      console.log(err);
+      console.log('utils.js: ', err);
     }
     return {
       isRunning: res || false,
@@ -17,9 +17,9 @@ class Utils {
   static async getDbStatus(conn) {
     let res = null;
     try {
-      res = await conn.query('SELECT user()');
+      res = await conn.query('SELECT 1;');
     } catch (err) {
-      console.log(err);
+      console.log('utils.js: ', err);
     }
     return {
       isRunning: res || false,
@@ -34,7 +34,7 @@ class Utils {
       const [pools] = await conn.query(sql_query);
       p = pools;
     } catch (err) {
-      console.log(err);
+      console.log('utils.js: ', err);
     }
     return {
       pools: p,

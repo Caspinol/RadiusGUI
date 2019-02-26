@@ -19,29 +19,29 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        headers: [
-          { text: 'Pool name', value: 'pool_name' },
-          { text: 'Total IPs', value: '' },
-          { text: 'Used IPs', value: 'used' },
-          { text: 'Free IPs', value: 'free' },
-        ],
-        pools: [],
-      };
+export default {
+  data() {
+    return {
+      headers: [
+        { text: 'Pool name', value: 'pool_name' },
+        { text: 'Total IPs', value: '' },
+        { text: 'Used IPs', value: 'used' },
+        { text: 'Free IPs', value: 'free' },
+      ],
+      pools: [],
+    };
+  },
+  mounted() {
+    this.update();
+  },
+  methods: {
+    async update() {
+      const { data } = await this.$axios.post('utils/get-pools');
+      this.pools = data.pools;
     },
-    created() {
-      this.update();
+    total(item) {
+      return Number(item.free) + Number(item.used);
     },
-    methods: {
-      async update() {
-        const { data } = await this.$axios.post('utils/get-pools');
-        this.pools = data.pools;
-      },
-      total(item) {
-        return Number(item.free) + Number(item.used);
-      },
-    },
-  };
+  },
+};
 </script>

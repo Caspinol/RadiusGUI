@@ -15,7 +15,7 @@ export default {
       timer: '',
     };
   },
-  created() {
+  mounted() {
     this.getSrvStatus();
     this.timer = setInterval(this.getSrvStatus, 20000);
   },

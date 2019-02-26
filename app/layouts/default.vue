@@ -42,6 +42,7 @@
       </v-btn>
       <v-toolbar-title class="accent--text" v-text="title" />
       <v-spacer></v-spacer>
+      <DBCheck></DBCheck>
       <HostCheck></HostCheck>
     </v-toolbar>
     <v-content>

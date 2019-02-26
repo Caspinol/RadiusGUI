@@ -32,7 +32,7 @@ export default {
     };
   },
 
-  async created() {
+  async mounted() {
     let d = {};
     try {
       const { data } = await this.$axios.post('dashboard/show-dashboard');

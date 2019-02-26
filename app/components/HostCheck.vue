@@ -28,7 +28,7 @@ export default {
       getResult: 'utils/getResult',
     }),
   },
-  created() {
+  mounted() {
     this.update();
     this.timer = setInterval(
       function() {

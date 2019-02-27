@@ -1,7 +1,4 @@
 export const state = () => ({
-  result: '',
-  message: '',
-  title: '',
   accounting: [],
   accCount: 0,
 });
@@ -10,24 +7,10 @@ export const mutations = {
   ACC_FETCH_SUCCESS(state, { accounting, count }) {
     state.accounting = accounting;
     state.accCount = count;
-    state.result = '';
-  },
-
-  ACC_FETCH_FAIL(state, err) {
-    state.result = 'error';
-    state.message = 'Failed to fetch accounting data.\nError: ' + err;
-    state.title = 'Failed to load!';
   },
 };
 
 export const getters = {
-  getResult(state) {
-    return {
-      result: state.result,
-      message: state.message,
-      title: state.title,
-    };
-  },
   getAccounting(state) {
     return state.accounting;
   },
@@ -37,7 +20,7 @@ export const getters = {
 };
 
 export const actions = {
-  async showAccounting({ commit }, pagination) {
+  async showAccounting({ commit, dispatch }, pagination) {
     try {
       const { data } = await this.$axios.post(
         'accounting/showAccounting',
@@ -48,7 +31,11 @@ export const actions = {
         count: data.total_count,
       });
     } catch (err) {
-      commit('ACC_FETCH_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error fetching accounting data. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 };

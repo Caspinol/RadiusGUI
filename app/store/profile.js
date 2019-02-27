@@ -1,7 +1,4 @@
 export const state = () => ({
-  result: '',
-  message: '',
-  title: '',
   profiles: [],
   currentProfile: [],
   currentProfileName: '',
@@ -17,7 +14,7 @@ export const mutations = {
     if (idx > -1) state.currentProfile.splice(idx, 1);
   },
 
-  UPDATE_PROFILE_LIST(state, { profile, op }) {
+  UPDATE_PROFILE_LIST(state, profile) {
     const idx = state.profiles.findIndex(el => {
       return el.groupname === profile.groupname;
     });
@@ -25,18 +22,6 @@ export const mutations = {
     // If the old profile exists remove it before adding new one
     if (idx > -1) {
       state.profiles.splice(idx, 1);
-    }
-
-    if (op === 'add') {
-      state.profiles.push(profile);
-    }
-
-    state.result = 'success';
-    state.title = 'Success!';
-    if (op === 'add') {
-      state.message = 'Profile list updated.';
-    } else {
-      state.message = 'Profile succesfully deleted.';
     }
   },
 
@@ -51,43 +36,12 @@ export const mutations = {
     state.currentProfileName = name;
   },
 
-  FETCH_PROFILE_FAIL() {},
-
   FETCH_PROFILES_SUCCESS(state, profiles) {
     state.profiles = profiles;
-    state.result = 'success';
-    state.message = '';
-    state.title = 'Success!';
-  },
-
-  FETCH_PROFILES_FAIL(state) {
-    state.result = 'error';
-    state.message = 'There was an error while fething the profiles.';
-    state.title = 'Error!';
-  },
-
-  SAVE_PROFILE_FAIL(state) {
-    state.result = 'error';
-    state.message = 'There was an error while saving the profiles.';
-    state.title = 'Error saving profile!';
-  },
-
-  DELETE_PROFILE_FAIL(state) {
-    state.result = 'error';
-    state.message = 'There was an error while deleteing the profiles.';
-    state.title = 'Error deleteing profile!';
   },
 };
 
 export const getters = {
-  getResult(state) {
-    return {
-      result: state.result,
-      message: state.message,
-      title: state.title,
-    };
-  },
-
   getProfiles(state) {
     return state.profiles;
   },
@@ -102,66 +56,98 @@ export const getters = {
 };
 
 export const actions = {
-  async fetchProfile({ commit }, name) {
+  async fetchProfile({ commit, dispatch }, name) {
     try {
       const { data } = await this.$axios.post('profiles/get-profile', { name });
       commit('SET_PROFILE', data.pageData);
     } catch (err) {
-      commit('FETCH_PROFILE_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error while fething profile. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async fetchProfiles({ commit }) {
+  async fetchProfiles({ commit, dispatch }) {
     try {
       const { data } = await this.$axios.post('profiles/list-profiles');
       commit('FETCH_PROFILES_SUCCESS', data.pageData);
     } catch (err) {
       console.log(err);
-      commit('FETCH_PROFILES_FAIL', err);
+      const notif = {
+        type: 'error',
+        message:
+          'There was an error while fething profile list. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async saveProfile({ commit, state }) {
+  async saveProfile({ commit, state, dispatch }) {
     try {
       await this.$axios.post('profiles/save-profile', {
         name: state.currentProfileName,
         rows: state.currentProfile,
       });
       commit('UPDATE_PROFILE_LIST', {
-        profile: {
-          groupname: state.currentProfileName,
-          count: 0,
-        },
-        op: 'add',
+        groupname: state.currentProfileName,
+        count: 0,
       });
+      const notif = {
+        type: 'success',
+        message: 'Profile saved.',
+        title: 'Suucess',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('SAVE_PROFILE_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error while saving the profile. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async deleteProfile({ commit }, profile) {
+  async deleteProfile({ commit, dispatch }, profile) {
     try {
       await this.$axios.post('profiles/delete-profile', {
         name: profile.groupname,
       });
       commit('UPDATE_PROFILE_LIST', {
-        profile: {
-          groupname: profile.groupname,
-        },
-        op: 'delete',
+        groupname: profile.groupname,
       });
-    } catch (e) {
-      commit('DELETE_PROFILE_FAIL');
+      const notif = {
+        type: 'success',
+        message: 'Profile deleted succesfully.',
+      };
+      dispatch('notification/add', notif, { root: true });
+    } catch (err) {
+      const notif = {
+        type: 'error',
+        message:
+          'There was an error while deleting the profile. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async submitWizard({ commit }, wizardData) {
+  async submitWizard({ commit, dispatch }, wizardData) {
     try {
       await this.$axios.post('profiles/wizardProfile', wizardData);
       const { data } = await this.$axios.post('profiles/list-profiles');
       commit('FETCH_PROFILES_SUCCESS', data.pageData);
+      const notif = {
+        type: 'success',
+        message: 'Profile created.',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('SAVE_PROFILE_FAIL');
+      const notif = {
+        type: 'error',
+        message: 'Failed to create the profile. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 };

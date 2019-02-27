@@ -1,7 +1,4 @@
 export const state = () => ({
-  result: '',
-  message: '',
-  title: '',
   pools: [],
   poolCount: 0,
 });
@@ -10,30 +7,14 @@ export const mutations = {
   SET_POOLS(state, { pools, count }) {
     state.pools = pools;
     state.poolCount = count;
-    state.result = '';
-  },
-
-  FETCH_POOLS_FAIL(state) {
-    state.result = 'error';
-    state.message = 'There was an error while fetching the pool list.';
-    state.title = 'Error loading IP pools!';
   },
 
   DELETE_SUCCESS(state, item) {
-    state.result = 'success';
-    state.message = 'IP entry deleted successfully.';
-    state.title = 'Success!';
-
     const idx = state.pools.indexOf(item);
     if (idx > -1) {
       state.pools.splice(idx, 1);
       state.poolCount--;
     }
-  },
-  DELETE_FAIL(state, err) {
-    state.result = 'error';
-    state.message = 'There was an issue deleting entry. Error: ' + err;
-    state.title = 'Failed to delete!';
   },
 
   UPDATE_IP_SUCCESS(state, item) {
@@ -44,55 +25,15 @@ export const mutations = {
     if (idx > -1) {
       state.pools.splice(idx, 1, item);
     }
-
-    state.result = 'success';
-    state.message = 'IP sucesfuly updated.';
-    state.title = 'Updated!';
-  },
-
-  UPDATE_IP_FAIL(state, err) {
-    state.result = 'error';
-    state.message = 'Failed to update IP entry.\n Error: ' + err;
-    state.title = 'Failed to update!';
   },
 
   SAVE_IP_SUCCESS(state, item) {
     state.pools.push(item);
     state.poolCount++;
-
-    state.result = 'success';
-    state.message = 'IP saved.';
-    state.title = 'Saved!';
-  },
-
-  SAVE_IP_FAIL(state, err) {
-    state.result = 'error';
-    state.message = 'Failed to save IP entry.\n Error: ' + err;
-    state.title = 'Failed to save!';
-  },
-
-  SAVE_POOL_SUCCESS(state) {
-    state.result = 'success';
-    state.message = 'IP pool has been added.';
-    state.title = 'Saved!';
-  },
-
-  SAVE_POOL_FAIL(state, err) {
-    state.result = 'error';
-    state.message = 'Failed to create IP pool entry.\n Error: ' + err;
-    state.title = 'Failed to create!';
   },
 };
 
 export const getters = {
-  getResult(state) {
-    return {
-      result: state.result,
-      message: state.message,
-      title: state.title,
-    };
-  },
-
   getPools(state) {
     return state.pools;
   },
@@ -103,48 +44,88 @@ export const getters = {
 };
 
 export const actions = {
-  async deleteIP({ commit }, item) {
+  async deleteIP({ commit, dispatch }, item) {
     try {
       await this.$axios.post('ippools/delete-ip', { id: item.id });
       commit('DELETE_SUCCESS', item);
+      const notif = {
+        type: 'success',
+        message: 'IP deleted succesfully.',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('DELETE_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error deleting ip. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async getPools({ commit }, pagination) {
+  async getPools({ commit, dispatch }, pagination) {
     try {
       const { data } = await this.$axios.post('ippools/show-pools', pagination);
       commit('SET_POOLS', { pools: data.pageData, count: data.total_count });
     } catch (err) {
-      commit('FETCH_POOLS_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error fetching pool data. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async updateIP({ commit }, item) {
+  async updateIP({ commit, dispatch }, item) {
     try {
       await this.$axios.post('ippools/update-ip', item);
       commit('UPDATE_IP_SUCCESS', item);
+      const notif = {
+        type: 'success',
+        message: 'IP entry updated!',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('UPDATE_IP_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'Failed to update the IP. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async saveIP({ commit }, item) {
+  async saveIP({ commit, dispatch }, item) {
     try {
       await this.$axios.post('ippools/save-ip', item);
       commit('SAVE_IP_SUCCESS', item);
+      const notif = {
+        type: 'success',
+        message: 'IP saved!.',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('SAVE_IP_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'Failed to save the IP. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 
-  async savePool({ commit }, pool) {
+  async savePool({ commit, dispatch }, pool) {
     try {
       await this.$axios.post('ippools/save-pool', pool);
       commit('SAVE_POOL_SUCCESS');
+      const notif = {
+        type: 'success',
+        message: 'Pool saved!.',
+      };
+      dispatch('notification/add', notif, { root: true });
     } catch (err) {
-      commit('SAVE_POOL_FAIL', err);
+      const notif = {
+        type: 'error',
+        message: 'There was an error while saving the pool. ' + err.message,
+      };
+      dispatch('notification/add', notif, { root: true });
     }
   },
 };

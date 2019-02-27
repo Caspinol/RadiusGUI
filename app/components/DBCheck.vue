@@ -8,31 +8,28 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
-      isRunning: false,
       timer: '',
     };
   },
+  computed: {
+    ...mapGetters({
+      isRunning: 'utils/getDbStatus',
+    }),
+  },
   mounted() {
-    this.getSrvStatus();
-    this.timer = setInterval(this.getSrvStatus, 20000);
+    this.update();
+    this.timer = setInterval(this.update, 20000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
   },
   methods: {
-    getSrvStatus() {
-      this.$axios
-        .post('utils/get-db-status')
-        .then(({ data }) => {
-          this.isRunning = data.isRunning;
-        })
-        .catch(err => {
-          console.log(err);
-          this.isRunning = false;
-        });
+    update() {
+      this.$store.dispatch('utils/getDbCheck');
     },
   },
 };

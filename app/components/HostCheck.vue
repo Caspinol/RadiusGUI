@@ -25,28 +25,15 @@ export default {
       getTotalMem: 'utils/getTotalMem',
       getFreeMem: 'utils/getFreeMem',
       getUptime: 'utils/getUptime',
-      getResult: 'utils/getResult',
     }),
   },
   mounted() {
     this.update();
-    this.timer = setInterval(
-      function() {
-        this.update();
-      }.bind(this),
-      20000
-    );
+    this.timer = setInterval(this.update, 20000);
   },
   methods: {
     update() {
-      this.$store.dispatch('utils/getHostStats').catch(() => {
-        if (this.getResult.result) {
-          this.$snotify[this.getResult.result](
-            this.getResult.message,
-            this.getResult.title
-          );
-        }
-      });
+      this.$store.dispatch('utils/getHostStats');
     },
   },
 };

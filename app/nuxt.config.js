@@ -62,7 +62,7 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
 
   axios: {
-	  baseURL: 'http://localhost:3000/api/',
+    baseURL: 'http://localhost:3000/api/',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
@@ -70,6 +70,10 @@ module.exports = {
     },
   },
 
+  /*
+   * Rename the nuxt build directory as docker can have issues with "." in file names
+   */
+  buildDir: 'dist',
   /*
    ** Build configuration
    */

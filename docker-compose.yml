@@ -24,7 +24,7 @@ services:
       args:
          confname: "nginx.conf"
     networks:
-        radius_network:
+        - radius_network
     ports:
       - "80:80"
       - "443:443"

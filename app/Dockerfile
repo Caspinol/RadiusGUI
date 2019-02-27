@@ -1,8 +1,8 @@
 FROM node:alpine
 
-ENV APP_ROOT /radius_gui
+ENV APP_ROOT /usr/src/radiusgui
 
-RUN mkdir ${APP_ROOT}
+RUN mkdir -p ${APP_ROOT}
 WORKDIR ${APP_ROOT}
 ADD . ${APP_ROOT}
 

@@ -46,7 +46,6 @@ export const mutations = {
     state.pools = pools;
   },
   SET_LAST_LOGINS(state, logins) {
-    console.log(logins);
     state.lastLogins = logins;
   },
 };

@@ -3,7 +3,11 @@
     <v-card ma-2>
       <v-card-title class="headline accent--text">IP pools</v-card-title>
       <v-card-text>
-        <v-data-table :headers="headers" :items="getPools">
+        <v-data-table
+          :headers="headers"
+          :items="getPools"
+          :rows-per-page-items="tableItems"
+        >
           <template slot="items" slot-scope="props">
             <tr>
               <td>{{ props.item.pool_name }}</td>
@@ -28,6 +32,12 @@ export default {
         { text: 'Total IPs', value: '' },
         { text: 'Used IPs', value: 'used' },
         { text: 'Free IPs', value: 'free' },
+      ],
+      tableItems: [
+        10,
+        20,
+        30,
+        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 },
       ],
     };
   },

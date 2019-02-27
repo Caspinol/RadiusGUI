@@ -48,7 +48,7 @@ module.exports = {
    */
   css: [
     '@/assets/style/app.styl',
-    '~/node_modules/vue-snotify/styles/material.css',
+    '~/node_modules/vue-snotify/styles/dark.css',
   ],
 
   /*

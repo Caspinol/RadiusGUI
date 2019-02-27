@@ -3,7 +3,7 @@
     <v-card ma-2>
       <v-card-title class="headline accent--text">IP pools</v-card-title>
       <v-card-text>
-        <v-data-table :headers="headers" :items="pools">
+        <v-data-table :headers="headers" :items="getPools">
           <template slot="items" slot-scope="props">
             <tr>
               <td>{{ props.item.pool_name }}</td>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
   data() {
     return {
@@ -28,16 +29,19 @@ export default {
         { text: 'Used IPs', value: 'used' },
         { text: 'Free IPs', value: 'free' },
       ],
-      pools: [],
     };
+  },
+  computed: {
+    ...mapGetters({
+      getPools: 'utils/getPools',
+    }),
   },
   mounted() {
     this.update();
   },
   methods: {
-    async update() {
-      const { data } = await this.$axios.post('utils/get-pools');
-      this.pools = data.pools;
+    update() {
+      this.$store.dispatch('utils/getPoolsData');
     },
     total(item) {
       return Number(item.free) + Number(item.used);

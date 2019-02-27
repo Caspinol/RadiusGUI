@@ -8,24 +8,37 @@ class Dashboard {
       'where username!="" AND acctstoptime IS NULL AND acctsessiontime >0 ' +
       'ORDER BY acctsessiontime DESC LIMIT 5;';
 
-    const sql_last_logins =
-      'SELECT * FROM radpostauth ORDER BY authdate DESC LIMIT 10;';
-
-    let ll = [];
     let btu = [];
     try {
       const [big_traffic_users] = await conn.query(sql_top_traffic);
-      const [last_logins] = await conn.query(sql_last_logins);
-      ll = last_logins;
+
       btu = big_traffic_users;
     } catch (err) {
-      console.log('Dash server: ', err);
+      console.log(err);
     }
     return {
-      last_logins: ll,
       big_traffic_users: btu,
     };
   }
-}
 
+  static async showLastLogins(conn, { page, rowsPerPage, sortBy, descending }) {
+    sortBy = sortBy || 'username';
+    const order = descending ? 'DESC' : 'ASC';
+
+    let sql_pagesize = '';
+    if (parseInt(rowsPerPage) > 0) {
+      sql_pagesize = `LIMIT ${rowsPerPage} OFFSET ${(page - 1) * rowsPerPage}`;
+    }
+
+    const sql_last_logins = `SELECT * FROM radpostauth ORDER BY ${sortBy} ${order} ${sql_pagesize}`;
+    const sql_count = 'SELECT COUNT(*) as count FROM radpostauth;';
+
+    const [logins] = await conn.query(sql_last_logins);
+    const [count] = await conn.query(sql_count);
+    return {
+      logins,
+      count: count[0].count,
+    };
+  }
+}
 module.exports = Dashboard;

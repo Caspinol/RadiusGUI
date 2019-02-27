@@ -1,19 +1,16 @@
 <template>
-
   <v-card class="ma-2">
     <v-card-title class="headline accent--text">Last logins</v-card-title>
     <v-card-text>
       <v-data-table
         :headers="headers"
-        :items="items"
-        :total-items="items.length"
+        :items="getLogins.logins"
+        :total-items="getLogins.count"
+        :pagination.sync="pagination"
+        :loading="loading"
         item-key="username"
-        hide-actions
       >
-        <template
-          slot="items"
-          slot-scope="props"
-        >
+        <template slot="items" slot-scope="props">
           <tr>
             <td>{{ props.item.username }}</td>
             <td>{{ props.item.reply }}</td>
@@ -24,33 +21,50 @@
       </v-data-table>
     </v-card-text>
   </v-card>
-
 </template>
 
 <script>
-  import { formatDate } from "../../utils";
-  export default {
-    props: {
-      items: {
-        required: true,
-        type: Array
-      }
+import { mapGetters } from 'vuex';
+import { formatDate } from '../../utils';
+export default {
+  data() {
+    return {
+      headers: [
+        { text: 'Username', value: 'username' },
+        { text: 'Result', value: 'reply' },
+        { text: 'MAC', value: 'macaddress' },
+        { text: 'Time', value: 'authdate' },
+      ],
+      pagination: {
+        rowsPerPage: 10,
+        sortBy: '',
+        searchString: '',
+      },
+      loading: false,
+    };
+  },
+  computed: {
+    ...mapGetters({
+      getLogins: 'utils/getLogins',
+    }),
+  },
+  watch: {
+    pagination: {
+      async handler() {
+        const { searchString } = this.pagination;
+        if (!searchString || searchString.length >= 3) {
+          this.loading = true;
+          await this.$store.dispatch('utils/getLastLogins', this.pagination);
+          this.loading = false;
+        }
+      },
+      deep: true,
     },
-    data() {
-      return {
-        headers: [
-          { text: "Username", value: "username" },
-          { text: "Result", value: "reply" },
-          { text: "MAC", value: "macaddress" },
-          { text: "Time", value: "authdate" }
-        ]
-      };
-    },
-    methods: {
-      formatTimeStamp: formatDate
-    }
-  };
+  },
+  methods: {
+    formatTimeStamp: formatDate,
+  },
+};
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

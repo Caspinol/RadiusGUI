@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex xs12 sm6 md6>
-      <LastLogins :items="last_logins" />
+      <LastLogins />
     </v-flex>
     <v-flex xs12 sm6 md6>
       <IpPools />
@@ -26,9 +26,7 @@ export default {
 
   data() {
     return {
-      last_logins: [],
       big_traffic_users: [],
-      pools: [],
     };
   },
 
@@ -40,7 +38,6 @@ export default {
     } catch (err) {
       console.log(err);
     }
-    this.last_logins = d.last_logins || [];
     this.big_traffic_users = d.big_traffic_users || [];
   },
 };

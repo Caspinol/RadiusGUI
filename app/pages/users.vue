@@ -194,7 +194,6 @@ export default {
       getIpv4Pools: 'users/getIpv4Pools',
       getIpv6PDPools: 'users/getIpv6PDPools',
       getIpv6NTPools: 'users/getIpv6NTPools',
-      getResult: 'users/getResult',
     }),
   },
   watch: {
@@ -228,10 +227,7 @@ export default {
             text: 'Yes',
             action: async toast => {
               await this.$store.dispatch('users/deleteUser', item);
-              this.$snotify[this.getResult.result](
-                this.getResult.message,
-                this.getResult.title
-              );
+
               this.dialog = false;
               this.$snotify.remove(toast.id);
             },
@@ -252,10 +248,6 @@ export default {
     },
     async saveItem(item) {
       await this.$store.dispatch('users/saveUser', item);
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
       this.editedItem = {};
       this.dialog = false;
     },

@@ -168,7 +168,6 @@ export default {
     ...mapGetters({
       getAccounting: 'accounting/getAccounting',
       getAccCount: 'accounting/getAccCount',
-      getResult: 'accounting/getResult',
     }),
   },
   watch: {
@@ -184,12 +183,6 @@ export default {
             this.pagination
           );
 
-          if (this.getResult.result) {
-            this.$snotify[this.getResult.result](
-              this.getResult.message,
-              this.getResult.title
-            );
-          }
           this.loading = false;
         }
       },

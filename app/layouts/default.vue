@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <vue-snotify></vue-snotify>
+    <Notification></Notification>
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -60,11 +60,14 @@
 import DBCheck from '@/components/DBCheck';
 import SrvCheck from '@/components/SrvCheck';
 import HostCheck from '@/components/HostCheck';
+import Notification from '@/components/Notification';
+
 export default {
   components: {
     DBCheck,
     SrvCheck,
     HostCheck,
+    Notification,
   },
   data() {
     return {

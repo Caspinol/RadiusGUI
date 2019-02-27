@@ -204,7 +204,6 @@ export default {
     ...mapGetters({
       getPools: 'ippools/getPools',
       getPoolCount: 'ippools/getPoolCount',
-      getResult: 'ippools/getResult',
     }),
   },
   watch: {
@@ -214,12 +213,7 @@ export default {
         if (!searchString || searchString.length >= 3) {
           this.loading = true;
           await this.$store.dispatch('ippools/getPools', this.pagination);
-          if (this.getResult.result) {
-            this.$snotify[this.getResult.result](
-              this.getResult.message,
-              this.getResult.title
-            );
-          }
+
           this.loading = false;
         }
       },
@@ -238,10 +232,6 @@ export default {
     },
     async savePool(item) {
       await this.$store.dispatch('ippools/savePool', item);
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
       //Trigger the pagination handler and show newly added pool
       this.pagination.searchString = item.pool_name;
       this.close();
@@ -253,18 +243,10 @@ export default {
     },
     async saveIp(item) {
       await this.$store.dispatch('ippools/saveIP', item);
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
       this.close();
     },
     async updateIp(item) {
       await this.$store.dispatch('ippools/updateIP', item);
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
       this.close();
     },
     async deleteItem(item) {
@@ -277,10 +259,6 @@ export default {
               text: 'Yes',
               action: async toast => {
                 await this.$store.dispatch('ippools/deleteIP', item);
-                this.$snotify[this.getResult.result](
-                  this.getResult.message,
-                  this.getResult.title
-                );
                 this.$snotify.remove(toast.id);
               },
               bold: false,

@@ -38,7 +38,7 @@ export default {
       const { data } = await this.$axios.post('dashboard/show-dashboard');
       d = data;
     } catch (err) {
-      console.log('Dashboard: ', err);
+      console.log(err);
     }
     this.last_logins = d.last_logins || [];
     this.big_traffic_users = d.big_traffic_users || [];

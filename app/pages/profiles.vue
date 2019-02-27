@@ -270,7 +270,6 @@ export default {
       getProfiles: 'profile/getProfiles',
       getProfile: 'profile/getProfile',
       getCurrentProfileName: 'profile/getCurrentProfileName',
-      getResult: 'profile/getResult',
     }),
 
     getProfileName: {
@@ -299,10 +298,6 @@ export default {
     },
     async saveProfile() {
       await this.$store.dispatch('profile/saveProfile');
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
       this.close();
     },
     async deleteProfile(item) {
@@ -321,10 +316,6 @@ export default {
                   );
                 } else {
                   await this.$store.dispatch('profile/deleteProfile', item);
-                  this.$snotify[this.getResult.result](
-                    this.getResult.message,
-                    this.getResult.title
-                  );
                 }
                 this.$snotify.remove(toast.id);
               },
@@ -343,10 +334,6 @@ export default {
     },
     async submitWizard() {
       await this.$store.dispatch('profile/submitWizard', this.wizard);
-      this.$snotify[this.getResult.result](
-        this.getResult.message,
-        this.getResult.title
-      );
     },
     close() {
       this.showProfile = '';

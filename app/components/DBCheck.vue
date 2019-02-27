@@ -30,7 +30,7 @@ export default {
           this.isRunning = data.isRunning;
         })
         .catch(err => {
-          console.log('Ja pierdole: ', err);
+          console.log(err);
           this.isRunning = false;
         });
     },

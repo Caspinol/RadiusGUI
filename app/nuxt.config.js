@@ -62,7 +62,7 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
 
   axios: {
-    baseURL: 'https://localhost/api/',
+	  baseURL: 'http://localhost:3000/api/',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',

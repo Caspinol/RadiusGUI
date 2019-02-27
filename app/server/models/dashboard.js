@@ -21,7 +21,10 @@ class Dashboard {
     };
   }
 
-  static async showLastLogins(conn, { page, rowsPerPage, sortBy, descending }) {
+  static async showLastLogins(
+    conn,
+    { page, rowsPerPage, sortBy, descending, searchString }
+  ) {
     sortBy = sortBy || 'username';
     const order = descending ? 'DESC' : 'ASC';
 
@@ -30,8 +33,13 @@ class Dashboard {
       sql_pagesize = `LIMIT ${rowsPerPage} OFFSET ${(page - 1) * rowsPerPage}`;
     }
 
-    const sql_last_logins = `SELECT * FROM radpostauth ORDER BY ${sortBy} ${order} ${sql_pagesize}`;
-    const sql_count = 'SELECT COUNT(*) as count FROM radpostauth;';
+    let optionalSearch = '';
+    if (searchString) {
+      optionalSearch = ` WHERE username LIKE '%${searchString}%' OR reply LIKE '%${searchString}%' OR macaddress LIKE '%${searchString}%' OR authdate LIKE '%${searchString}%' `;
+    }
+
+    const sql_last_logins = `SELECT * FROM radpostauth ${optionalSearch}  ORDER BY ${sortBy} ${order} ${sql_pagesize}`;
+    const sql_count = `SELECT COUNT(*) as count FROM radpostauth ${optionalSearch};`;
 
     const [logins] = await conn.query(sql_last_logins);
     const [count] = await conn.query(sql_count);

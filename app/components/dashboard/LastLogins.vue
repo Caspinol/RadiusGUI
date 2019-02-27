@@ -1,6 +1,16 @@
 <template>
   <v-card class="ma-2">
-    <v-card-title class="headline accent--text">Last logins</v-card-title>
+    <v-card-title class="headline accent--text"
+      ><v-flex>Last logins</v-flex>
+      <v-flex>
+        <v-text-field
+          v-model="pagination.searchString"
+          solo
+          label="Search"
+          prepend-inner-icon="search"
+          clearable
+        ></v-text-field> </v-flex
+    ></v-card-title>
     <v-card-text>
       <v-data-table
         :headers="headers"

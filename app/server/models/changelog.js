@@ -1,11 +1,8 @@
 class Changelog {
-  static async showLogs(conn, {
-    page,
-    size,
-    sortBy,
-    descending,
-    searchString
-  }) {
+  static async showLogs(
+    conn,
+    { page, size, sortBy, descending, searchString }
+  ) {
     sortBy = sortBy || 'timestamp';
     const order = descending ? 'DESC' : 'ASC';
     let optionalSearch = '';
@@ -15,7 +12,7 @@ class Changelog {
 
     let offset = '';
     if (Number(size) >= 0) {
-      offset += `LIMIT ${size} OFFSET ${(page - 1) * size}`
+      offset += `LIMIT ${size} OFFSET ${(page - 1) * size}`;
     }
 
     let sql_list = `SELECT * FROM changelog ${optionalSearch} ORDER BY ${sortBy} ${order} ${offset};`;
@@ -26,7 +23,7 @@ class Changelog {
     return {
       pageData: changelist,
       total_count: count[0].count,
-    }
+    };
   }
 }
 

@@ -158,6 +158,7 @@ export default {
       pagination: {
         rowsPerPage: 10,
         sortBy: 'acctstarttime',
+        descending: true,
         searchString: '',
       },
       loading: false,

@@ -1,15 +1,33 @@
 const logger = require('../lib/logging');
 
 class Profiles {
-  static async listProfiles(conn, { sortBy, descending }) {
+  static async listProfiles(
+    conn,
+    { page, rowsPerPage, sortBy, descending, searchString }
+  ) {
     sortBy = sortBy || 'groupname';
     const order = descending ? 'DESC' : 'ASC';
 
-    let sql = `SELECT groupname, (SELECT count(username) FROM radusergroup as rug WHERE rug.groupname = rgr.groupname) as count FROM radius.radgroupreply as rgr GROUP BY groupname ORDER BY ${sortBy} ${order};`;
+    let optionalSearch = '';
+    if (searchString) {
+      optionalSearch = ` WHERE groupname LIKE '%${searchString}%' `;
+    }
 
-    const [data] = await conn.query(sql);
+    let sql_pagesize = '';
+    if (parseInt(rowsPerPage) > 0) {
+      sql_pagesize = ` LIMIT ${rowsPerPage} OFFSET ${(page - 1) *
+        rowsPerPage} `;
+    }
+
+    const sql = `SELECT groupname, (SELECT count(username) FROM radusergroup as rug WHERE rug.groupname = rgr.groupname) as count FROM radius.radgroupreply as rgr ${optionalSearch} GROUP BY groupname ORDER BY ${sortBy} ${order} ${sql_pagesize};`;
+
+    const sql_count = `SELECT COUNT(distinct groupname) as count FROM radgroupreply ${optionalSearch}`;
+
+    const [profiles] = await conn.query(sql);
+    const [count] = await conn.query(sql_count);
     return {
-      pageData: data,
+      profiles,
+      count: count[0].count,
     };
   }
 
@@ -65,7 +83,7 @@ class Profiles {
 
     const sql_profile =
       'INSERT INTO radgroupreply(groupname,attribute,op,value)' +
-      `VALUES ('${profileName}', 'Alc-Serv-Id', ':=', ${serviceId}), ('${profileName}', 'Alc-Subsc-Prof-Str', ':=', '${subsProfile}'), ('${profileName}', 'Alc-SLA-Prof-Str', ':=', '${qosProfile} '),('${profileName} ', 'Client-DNS-Pri', ':=', '8.8.8.8'),('${profileName} ', 'Client-DNS-Sec', ':=', '8.8.4.4'),('${profileName} ', 'Alc-IPv6-Primary-Dns', ':=', '2001:bbb::2000'),('${profileName} ', 'Alc-IPv6-Secondary-Dns', ':=', '2001:bbb::2001')`;
+      `VALUES ('${profileName}', 'Alc-Serv-Id', ':=', ${serviceId}), ('${profileName}', 'Alc-Subsc-Prof-Str', ':=', '${subsProfile}'), ('${profileName}', 'Alc-SLA-Prof-Str', ':=', '${qosProfile}'),('${profileName}', 'Client-DNS-Pri', ':=', '8.8.8.8'),('${profileName}', 'Client-DNS-Sec', ':=', '8.8.4.4'),('${profileName}', 'Alc-IPv6-Primary-Dns', ':=', '2001:bbb::2000'),('${profileName}', 'Alc-IPv6-Secondary-Dns', ':=', '2001:bbb::2001')`;
 
     logger.log('changelog', {
       message: `Created new profile: ${profileName} with the Wizard.`,

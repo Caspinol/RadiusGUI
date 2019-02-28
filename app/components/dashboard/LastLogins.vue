@@ -9,7 +9,7 @@
           label="Search"
           prepend-inner-icon="search"
           clearable
-        ></v-text-field> </v-flex
+        ></v-text-field></v-flex
     ></v-card-title>
     <v-card-text>
       <v-data-table
@@ -47,7 +47,8 @@ export default {
       ],
       pagination: {
         rowsPerPage: 10,
-        sortBy: '',
+        sortBy: 'authdate',
+        descending: true,
         searchString: '',
       },
       loading: false,

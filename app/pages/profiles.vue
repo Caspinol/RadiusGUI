@@ -23,12 +23,24 @@
               >Profile Wizard</v-btn
             >
           </v-flex>
+          <v-flex>
+            <v-text-field
+              v-model="pagination.searchString"
+              solo
+              dark
+              label="Search"
+              prepend-inner-icon="search"
+              clearable
+              class="ma-1"
+            ></v-text-field>
+          </v-flex>
         </v-layout>
         <v-data-table
           :headers="headers"
           :items="getProfiles"
+          :total-items="getProfileCount"
           :loading="loading"
-          :rows-per-page-items="pagination"
+          :pagination.sync="pagination"
           item-key="groupname"
           class="elevation-5"
         >
@@ -211,12 +223,6 @@ export default {
         { text: 'Usage', value: 'count' },
         { text: 'Delete', sortable: false },
       ],
-      pagination: [
-        10,
-        20,
-        30,
-        { text: '$vuetify.dataIterator.rowsPerPageAll', value: -1 },
-      ],
       ops: [':=', '==', '+=', '-='],
       serviceProviders: [
         { text: 'Siro', value: 5000 },
@@ -255,6 +261,11 @@ export default {
         { text: 'SU600-120-P', value: 'SU600-120-P' },
         { text: 'SU1G-200-P', value: 'SU1G-200-P"' },
       ],
+      pagination: {
+        rowsPerPage: 10,
+        sortBy: '',
+        searchString: '',
+      },
       currentProfileRow: {},
       showProfile: '',
       loading: false,
@@ -268,6 +279,7 @@ export default {
   computed: {
     ...mapGetters({
       getProfiles: 'profile/getProfiles',
+      getProfileCount: 'profile/getProfileCount',
       getProfile: 'profile/getProfile',
       getCurrentProfileName: 'profile/getCurrentProfileName',
     }),
@@ -279,6 +291,19 @@ export default {
       set: function(name) {
         this.$store.commit('profile/SET_PROFILE_NAME', name);
       },
+    },
+  },
+  watch: {
+    pagination: {
+      async handler() {
+        const { searchString } = this.pagination;
+        if (!searchString || searchString.length >= 3) {
+          this.loading = true;
+          await this.$store.dispatch('profile/fetchProfiles', this.pagination);
+          this.loading = false;
+        }
+      },
+      deep: true,
     },
   },
   methods: {
@@ -339,9 +364,6 @@ export default {
       this.showProfile = '';
       this.cleanUpForm();
     },
-  },
-  async fetch({ store }) {
-    await store.dispatch('profile/fetchProfiles');
   },
 };
 </script>

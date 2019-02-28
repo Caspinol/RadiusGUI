@@ -25,7 +25,7 @@ class Dashboard {
     conn,
     { page, rowsPerPage, sortBy, descending, searchString }
   ) {
-    sortBy = sortBy || 'username';
+    sortBy = sortBy || 'authdate';
     const order = descending ? 'DESC' : 'ASC';
 
     let sql_pagesize = '';

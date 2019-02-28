@@ -1,5 +1,6 @@
 export const state = () => ({
   profiles: [],
+  profileCount: 0,
   currentProfile: [],
   currentProfileName: '',
 });
@@ -36,14 +37,19 @@ export const mutations = {
     state.currentProfileName = name;
   },
 
-  FETCH_PROFILES_SUCCESS(state, profiles) {
+  FETCH_PROFILES_SUCCESS(state, { profiles, count }) {
     state.profiles = profiles;
+    state.profileCount = count;
   },
 };
 
 export const getters = {
   getProfiles(state) {
     return state.profiles;
+  },
+
+  getProfileCount(state) {
+    return state.profileCount;
   },
 
   getProfile(state) {
@@ -69,12 +75,15 @@ export const actions = {
     }
   },
 
-  async fetchProfiles({ commit, dispatch }) {
+  async fetchProfiles({ commit, dispatch }, pagination) {
     try {
-      const { data } = await this.$axios.post('profiles/list-profiles');
-      commit('FETCH_PROFILES_SUCCESS', data.pageData);
+      const { data } = await this.$axios.post(
+        'profiles/list-profiles',
+        pagination
+      );
+      console.log(data);
+      commit('FETCH_PROFILES_SUCCESS', data);
     } catch (err) {
-      console.log(err);
       const notif = {
         type: 'error',
         message:
@@ -136,7 +145,7 @@ export const actions = {
     try {
       await this.$axios.post('profiles/wizardProfile', wizardData);
       const { data } = await this.$axios.post('profiles/list-profiles');
-      commit('FETCH_PROFILES_SUCCESS', data.pageData);
+      commit('FETCH_PROFILES_SUCCESS', data);
       const notif = {
         type: 'success',
         message: 'Profile created.',

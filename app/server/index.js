@@ -105,7 +105,7 @@ async function start() {
           e
         );
       } finally {
-        conn.release();
+        if (conn) conn.release();
       }
     }
   });

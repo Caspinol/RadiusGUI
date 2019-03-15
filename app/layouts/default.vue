@@ -78,6 +78,7 @@ export default {
         { icon: 'supervised_user_circle', title: 'Users', to: '/users' },
         { icon: 'list', title: 'Profiles', to: '/profiles' },
         { icon: 'donut_large', title: 'IP pools', to: '/ippools' },
+        { icon: 'pie_chart', title: 'Subnets', to: '/subnets' },
         { icon: 'how_to_reg', title: 'Accounting', to: '/accounting' },
         { icon: 'subtitles', title: 'NAS', to: '/nas' },
         { icon: 'history', title: 'Changelog', to: '/changelog' },

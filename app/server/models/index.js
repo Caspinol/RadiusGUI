@@ -6,5 +6,6 @@ module.exports = {
   Ippools: require('./ippools'),
   Profiles: require('./profiles'),
   Utils: require('./utils'),
-  Changelog: require('./changelog')
-}
+  Changelog: require('./changelog'),
+  Subnets: require('./subnets'),
+};

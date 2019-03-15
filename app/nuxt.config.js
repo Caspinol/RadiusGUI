@@ -54,7 +54,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['@/plugins/vuetify', '@/plugins/snotify'],
+  plugins: ['@/plugins/vuetify', '@/plugins/snotify', '@/plugins/axios'],
 
   /*
    ** Nuxt.js modules
@@ -62,12 +62,16 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
 
   axios: {
-    baseURL: 'http://localhost:3000/api/',
+    baseURL: 'https://localhost/api/',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
       'Access-Control-Allow-Headers': 'Origin, Content-Type, X-Auth-Token',
     },
+  },
+
+  env: {
+    ELK_HOST: 'http://elk.enetconnect.ie:5601',
   },
 
   /*

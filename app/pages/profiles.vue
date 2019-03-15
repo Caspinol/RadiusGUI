@@ -39,7 +39,7 @@
           :headers="headers"
           :items="getProfiles"
           :total-items="getProfileCount"
-          :loading="loading"
+          :loading="getLoading"
           :pagination.sync="pagination"
           item-key="groupname"
           class="elevation-5"
@@ -268,7 +268,6 @@ export default {
       },
       currentProfileRow: {},
       showProfile: '',
-      loading: false,
       wizard: {
         profileName: '',
         serviceId: '',
@@ -282,6 +281,7 @@ export default {
       getProfileCount: 'profile/getProfileCount',
       getProfile: 'profile/getProfile',
       getCurrentProfileName: 'profile/getCurrentProfileName',
+      getLoading: 'getLoading',
     }),
 
     getProfileName: {
@@ -298,9 +298,7 @@ export default {
       async handler() {
         const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
           await this.$store.dispatch('profile/fetchProfiles', this.pagination);
-          this.loading = false;
         }
       },
       deep: true,

@@ -90,7 +90,7 @@
       :items="getNaslist.list"
       :total-items="getNaslist.count"
       :pagination.sync="pagination"
-      :loading="loading"
+      :loading="getLoading"
       item-key="nasname"
       class="elevation-5"
     >
@@ -154,12 +154,12 @@ export default {
         sortBy: 'nasname',
         searchString: '',
       },
-      loading: false,
     };
   },
   computed: {
     ...mapGetters({
       getNaslist: 'nas/getNaslist',
+      getLoading: 'getLoading',
     }),
   },
   watch: {
@@ -167,9 +167,7 @@ export default {
       async handler() {
         const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
           await this.$store.dispatch('nas/fetchNasList', this.pagination);
-          this.loading = false;
         }
       },
       deep: true,

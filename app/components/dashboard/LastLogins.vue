@@ -17,7 +17,7 @@
         :items="getLogins.logins"
         :total-items="getLogins.count"
         :pagination.sync="pagination"
-        :loading="loading"
+        :loading="getLoading"
         item-key="username"
       >
         <template slot="items" slot-scope="props">
@@ -51,12 +51,12 @@ export default {
         descending: true,
         searchString: '',
       },
-      loading: false,
     };
   },
   computed: {
     ...mapGetters({
       getLogins: 'utils/getLogins',
+      getLoading: 'getLoading',
     }),
   },
   watch: {
@@ -64,9 +64,7 @@ export default {
       async handler() {
         const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
           await this.$store.dispatch('utils/getLastLogins', this.pagination);
-          this.loading = false;
         }
       },
       deep: true,

@@ -6,7 +6,7 @@
       :items="changelist"
       :total-items="changeCount"
       :pagination.sync="pagination"
-      :loading="loading"
+      :loading="getLoading"
       item-key="timestamp"
       class="elevation-5"
     >
@@ -22,49 +22,50 @@
   </v-card>
 </template>
 
-
 <script>
-  export default {
-    data() {
-      return {
-        headers: [
-          { text: 'ID', value: 'changelogid', sortable: false },
-          { text: 'Timestamp', value: 'timestamp' },
-          { text: 'Severity', value: 'severity' },
-          { text: 'Message', value: 'message' },
-        ],
-        loading: false,
-        pagination: {},
-        changelist: [],
-        changeCount: 0,
-      };
-    },
-    watch: {
-      pagination: {
-        async handler() {
-          const {
+import { mapGetters } from 'vuex';
+
+export default {
+  data() {
+    return {
+      headers: [
+        { text: 'ID', value: 'changelogid', sortable: false },
+        { text: 'Timestamp', value: 'timestamp' },
+        { text: 'Severity', value: 'severity' },
+        { text: 'Message', value: 'message' },
+      ],
+      pagination: {},
+      changelist: [],
+      changeCount: 0,
+    };
+  },
+  computed: {
+    ...mapGetters(['getLoading']),
+  },
+  watch: {
+    pagination: {
+      async handler() {
+        const {
+          page,
+          rowsPerPage,
+          sortBy,
+          descending,
+          searchString,
+        } = this.pagination;
+        if (!searchString || searchString.length >= 3) {
+          const { data } = await this.$axios.post('changelog/show-logs', {
             page,
-            rowsPerPage,
+            size: rowsPerPage,
             sortBy,
             descending,
             searchString,
-          } = this.pagination;
-          if (!searchString || searchString.length >= 3) {
-            this.loading = true;
-            const { data } = await this.$axios.post('changelog/show-logs', {
-              page,
-              size: rowsPerPage,
-              sortBy,
-              descending,
-              searchString,
-            });
-            this.changelist = data.pageData;
-            this.changeCount = data.total_count;
-            this.loading = false;
-          }
-        },
-        deep: true,
+          });
+          this.changelist = data.pageData;
+          this.changeCount = data.total_count;
+        }
       },
+      deep: true,
     },
-  };
+  },
+};
 </script>

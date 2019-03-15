@@ -94,7 +94,7 @@
       :items="getUsers"
       :total-items="getUserCount"
       :pagination.sync="pagination"
-      :loading="loading"
+      :loading="getLoading"
       item-key="username"
       class="elevation-5"
     >
@@ -183,7 +183,6 @@ export default {
         sortBy: 'username',
         searchString: '',
       },
-      loading: false,
     };
   },
   computed: {
@@ -194,6 +193,7 @@ export default {
       getIpv4Pools: 'users/getIpv4Pools',
       getIpv6PDPools: 'users/getIpv6PDPools',
       getIpv6NTPools: 'users/getIpv6NTPools',
+      getLoading: 'getLoading',
     }),
   },
   watch: {
@@ -206,9 +206,7 @@ export default {
       async handler() {
         const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
           await this.$store.dispatch('users/fetchUsers', this.pagination);
-          this.loading = false;
         }
       },
       deep: true,

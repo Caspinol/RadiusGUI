@@ -137,7 +137,7 @@
       :items="getPools"
       :total-items="getPoolCount"
       :pagination.sync="pagination"
-      :loading="loading"
+      :loading="getLoading"
       item-key="pool_name"
       class="elevation-5"
     >
@@ -190,7 +190,6 @@ export default {
       ],
       ipDialog: false,
       poolDialog: false,
-      loading: false,
       editedItem: {},
       editing: false,
       pagination: {
@@ -204,6 +203,7 @@ export default {
     ...mapGetters({
       getPools: 'ippools/getPools',
       getPoolCount: 'ippools/getPoolCount',
+      getLoading: 'getLoading',
     }),
   },
   watch: {
@@ -211,10 +211,7 @@ export default {
       async handler() {
         const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
           await this.$store.dispatch('ippools/getPools', this.pagination);
-
-          this.loading = false;
         }
       },
       deep: true,

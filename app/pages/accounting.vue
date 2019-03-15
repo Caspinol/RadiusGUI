@@ -16,7 +16,7 @@
         :items="getAccounting"
         :total-items="getAccCount"
         :pagination.sync="pagination"
-        :loading="loading"
+        :loading="getLoading"
         item-key="acctsessionid"
         class="elevation-5"
         style="min-width: 100%;"
@@ -161,7 +161,6 @@ export default {
         descending: true,
         searchString: '',
       },
-      loading: false,
       tooltip: false,
     };
   },
@@ -169,6 +168,7 @@ export default {
     ...mapGetters({
       getAccounting: 'accounting/getAccounting',
       getAccCount: 'accounting/getAccCount',
+      getLoading: 'getLoading',
     }),
   },
   watch: {
@@ -177,14 +177,10 @@ export default {
         const { searchString } = this.pagination;
 
         if (!searchString || searchString.length >= 3) {
-          this.loading = true;
-
           await this.$store.dispatch(
             'accounting/showAccounting',
             this.pagination
           );
-
-          this.loading = false;
         }
       },
       deep: true,

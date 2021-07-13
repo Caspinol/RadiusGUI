@@ -26,13 +26,13 @@ class MySQLTransport extends Transport {
     });
     this.name = 'changelog';
   }
-  
+
   log(info, callback) {
-	
+
     const self = this;
     /* Perform the database write only for changelog severity */
     if (info.level === 'changelog') {
-	  
+
       this.pool.getConnection((err, connection) => {
         if (err) {
           console.log('Getting connection ', err);

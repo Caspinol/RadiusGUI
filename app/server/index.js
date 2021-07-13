@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../RadiusGUI.env' });
+require('dotenv').config({ path: '../RadiusGUI.env', debug: true });
 const Koa = require('koa');
 const consola = require('consola');
 const { Nuxt, Builder } = require('nuxt');
@@ -46,7 +46,7 @@ const pool = mysql.createPool({
 async function start() {
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config);
-
+console.log('Starting application');
   // Build in development
   if (config.dev) {
     const builder = new Builder(nuxt);
@@ -56,6 +56,7 @@ async function start() {
   app.use(require('koa-helmet')());
 
   app.use(async (ctx, next) => {
+			console.log('Request : '+ctx.request)
     if (['GET', 'DELETE'].includes(ctx.request.method)) {
       await next();
     } else if (ctx.is('application/json')) {
@@ -123,7 +124,7 @@ async function start() {
   });
 
   const port = process.env.PORT || 3000;
-  const host = process.env.HOST || '0.0.0.0';
+  const host = process.env.HOST || 'ty kurwo';
 
   const http = require('http');
   http.createServer(app.callback()).listen(port, host, () => {

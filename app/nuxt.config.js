@@ -1,8 +1,6 @@
 const pkg = require('./package');
 
 module.exports = {
-  mode: 'universal',
-
   /*
    ** Headers of the page
    */
@@ -47,7 +45,7 @@ module.exports = {
    ** Global CSS
    */
   css: [
-    '@/assets/style/app.styl',
+    '~/assets/style/app.styl',
     '~/node_modules/vue-snotify/styles/dark.css',
   ],
 
@@ -62,7 +60,8 @@ module.exports = {
   modules: ['@nuxtjs/axios'],
 
   axios: {
-    baseURL: 'https://localhost/api/',
+		//baseURL: 'http://localhost:3000/api/',
+		baseURL: 'http://192.168.1.200:3000/api/',
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PATCH, PUT, DELETE, OPTIONS',
@@ -87,15 +86,6 @@ module.exports = {
      ** You can extend webpack config here
      */
     extend(config, ctx) {
-      // Run ESLint on save
-      if (ctx.isDev && ctx.isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/,
-        });
-      }
     },
   },
 };

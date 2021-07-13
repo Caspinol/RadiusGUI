@@ -36,7 +36,7 @@ export default {
       const { data } = await this.$axios.post('dashboard/show-dashboard');
       d = data;
     } catch (err) {
-      console.log(err);
+      console.log('Error: Show dashboard: '+err);
     }
     this.big_traffic_users = d.big_traffic_users || [];
   },

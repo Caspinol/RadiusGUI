@@ -1,0 +1,33 @@
+{
+  "name": "RadiusGUI",
+  "version": "1.0.0",
+  "description": "RadiusGUI API server",
+  "author": "VersBinarii <versbinarii@gmail.com>",
+  "private": true,
+  "scripts": {
+    "dev": "nodemon index.js",
+    "lint": "eslint --ext .js,.vue --ignore-path ../.gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "co-body": "^6.1.0",
+    "co-busboy": "^1.5.0",
+    "consola": "^2.15.3",
+    "dotenv": "^10.0.0",
+    "koa": "^2.13.1",
+    "koa-helmet": "^6.1.0",
+    "koa2-cors": "^2.0.6",
+    "mysql2": "^2.2.5",
+    "netmask": "^2.0.2",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.30.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-vue": "^7.13.0",
+    "nodemon": "^2.0.12"
+  }
+}

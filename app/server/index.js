@@ -1,7 +1,6 @@
-require('dotenv').config({ path: '../RadiusGUI.env', debug: true });
+require('dotenv').config({ path: '../../RadiusGUI.env' });
 const Koa = require('koa');
 const consola = require('consola');
-const { Nuxt, Builder } = require('nuxt');
 
 const app = new Koa();
 app.use(
@@ -11,16 +10,12 @@ app.use(
   })
 );
 
-// Import and Set Nuxt.js options
-let config = require('../nuxt.config.js');
-config.dev = !(app.env === 'production');
-
-const path2method = path => {
+const path2method = (path) => {
   path = path.split('-');
   if (path.length === 1) {
     return path[0];
   } else if (path.length > 1) {
-    const parts = path.slice(1).map(part => {
+    const parts = path.slice(1).map((part) => {
       return `${part[0].toUpperCase()}${part.slice(1)}`;
     });
     return `${path[0]}${parts.join('')}`;
@@ -43,96 +38,65 @@ const pool = mysql.createPool({
   multipleStatements: true,
 });
 
-async function start() {
-  // Instantiate nuxt.js
-  const nuxt = new Nuxt(config);
-console.log('Starting application');
-  // Build in development
-  if (config.dev) {
-    const builder = new Builder(nuxt);
-    await builder.build();
-  }
+app.use(require('koa-helmet')());
 
-  app.use(require('koa-helmet')());
+app.use(async (ctx, next) => {
+  if (['GET', 'DELETE'].includes(ctx.request.method)) {
+    await next();
+  } else if (ctx.is('application/json')) {
+    ctx.json = await parse.json(ctx);
+    await next();
+  } else if (ctx.is('multipart/*') === 'multipart/form-data') {
+    ctx.parts = multipart(ctx, {
+      autoFields: true,
+    });
 
-  app.use(async (ctx, next) => {
-			console.log('Request : '+ctx.request)
-    if (['GET', 'DELETE'].includes(ctx.request.method)) {
-      await next();
-    } else if (ctx.is('application/json')) {
+    await next();
+  } else {
+    try {
       ctx.json = await parse.json(ctx);
-      await next();
-    } else if (ctx.is('multipart/*') === 'multipart/form-data') {
-      ctx.parts = multipart(ctx, {
-        autoFields: true,
-      });
-
-      await next();
-    } else {
-      try {
-        ctx.json = await parse.json(ctx);
-      } catch (err) {
-        ctx.json = null;
-        console.error(err);
-      }
-      await next();
+    } catch (err) {
+      ctx.json = null;
+      console.error(err);
     }
-  });
+    await next();
+  }
+});
 
-  app.use(async (ctx, next) => {
-    if (
-      ctx.path.startsWith('/api') === false ||
-      ctx.request.method !== 'POST'
-    ) {
-      await next();
-    } else {
-      const apiMethod = ctx.path.split('/api/')[1];
-      let [model, method] = apiMethod.split('/');
-      model = path2method(model).replace(
-        /^(.)(.*)/,
-        (_, f, r) => `${f.toUpperCase()}${r}`
+app.use(async (ctx, next) => {
+  if (ctx.path.startsWith('/api') === false || ctx.request.method !== 'POST') {
+    await next();
+  } else {
+    const apiMethod = ctx.path.split('/api/')[1];
+    let [model, method] = apiMethod.split('/');
+    model = path2method(model).replace(
+      /^(.)(.*)/,
+      (_, f, r) => `${f.toUpperCase()}${r}`
+    );
+    method = path2method(method);
+
+    let conn = null;
+    try {
+      conn = await pool.getConnection();
+      ctx.body = await models[model][method](conn, ctx.json);
+    } catch (e) {
+      console.error(
+        `Error handling the request in ${apiMethod} handler. Error: `,
+        e
       );
-      method = path2method(method);
-
-      let conn = null;
-      try {
-        conn = await pool.getConnection();
-        ctx.body = await models[model][method](conn, ctx.json);
-      } catch (e) {
-        console.error(
-          `Error handling the request in ${
-            models[model][method]
-          } handler. Error: `,
-          e
-        );
-      } finally {
-        if (conn) conn.release();
-      }
+    } finally {
+      if (conn) conn.release();
     }
+  }
+});
+
+const port = process.env.PORT || 3000;
+const host = process.env.HOST || '0.0.0.0';
+
+const http = require('http');
+http.createServer(app.callback()).listen(port, host, () => {
+  consola.ready({
+    message: `Server listening on http://${host}:${port}`,
+    badge: true,
   });
-
-  app.use(ctx => {
-    ctx.status = 200; // koa defaults to 404 when it sees that status is unset
-    return new Promise((resolve, reject) => {
-      ctx.res.on('close', resolve);
-      ctx.res.on('finish', resolve);
-      nuxt.render(ctx.req, ctx.res, promise => {
-        // nuxt.render passes a rejected promise into callback on error.
-        promise.then(resolve).catch(reject);
-      });
-    });
-  });
-
-  const port = process.env.PORT || 3000;
-  const host = process.env.HOST || 'ty kurwo';
-
-  const http = require('http');
-  http.createServer(app.callback()).listen(port, host, () => {
-    consola.ready({
-      message: `Server listening on http://${host}:${port}`,
-      badge: true,
-    });
-  });
-}
-
-start();
+});

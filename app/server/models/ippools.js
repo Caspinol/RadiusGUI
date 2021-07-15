@@ -4,10 +4,10 @@ const logger = require('../lib/logging');
 class Ippools {
   static async showPools(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
-    sortBy = sortBy || 'pool_name';
-    const order = descending ? 'DESC' : 'ASC';
+    sortBy = sortBy[0] || 'pool_name';
+    const order = sortDesc ? 'ASC' : 'DESC';
 
     let optionalSearch = '';
     if (searchString) {
@@ -107,7 +107,7 @@ class Ippools {
       };
     }
 
-    iprange.forEach(function(ip) {
+    iprange.forEach(function (ip) {
       sql_save +=
         "('" + pool_name + "','" + ip + "','" + mask + "','" + gateway + "'),";
     }, this);

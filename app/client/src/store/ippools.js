@@ -46,7 +46,7 @@ const getters = {
 const actions = {
   async deleteIP({ commit, dispatch }, item) {
     try {
-      await this.$axios.post('ippools/delete-ip', { id: item.id });
+      await this._vm.$axios.post('ippools/delete-ip', { id: item.id });
       commit('DELETE_SUCCESS', item);
       const notif = {
         type: 'success',
@@ -64,7 +64,10 @@ const actions = {
 
   async getPools({ commit, dispatch }, pagination) {
     try {
-      const { data } = await this.$axios.post('ippools/show-pools', pagination);
+      const { data } = await this._vm.$axios.post(
+        'ippools/show-pools',
+        pagination
+      );
       commit('SET_POOLS', { pools: data.pageData, count: data.total_count });
     } catch (err) {
       const notif = {
@@ -77,7 +80,7 @@ const actions = {
 
   async updateIP({ commit, dispatch }, item) {
     try {
-      await this.$axios.post('ippools/update-ip', item);
+      await this._vm.$axios.post('ippools/update-ip', item);
       commit('UPDATE_IP_SUCCESS', item);
       const notif = {
         type: 'success',
@@ -95,7 +98,7 @@ const actions = {
 
   async saveIP({ commit, dispatch }, item) {
     try {
-      await this.$axios.post('ippools/save-ip', item);
+      await this._vm.$axios.post('ippools/save-ip', item);
       commit('SAVE_IP_SUCCESS', item);
       const notif = {
         type: 'success',
@@ -113,7 +116,7 @@ const actions = {
 
   async savePool({ commit, dispatch }, pool) {
     try {
-      await this.$axios.post('ippools/save-pool', pool);
+      await this._vm.$axios.post('ippools/save-pool', pool);
       commit('SAVE_POOL_SUCCESS');
       const notif = {
         type: 'success',

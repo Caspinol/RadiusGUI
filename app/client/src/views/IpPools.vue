@@ -127,10 +127,10 @@
       :server-items-length="getPoolCount"
       :options.sync="pagination"
       :loading="getLoading"
-      item-key="pool_name"
+      item-key="id"
       class="elevation-5"
     >
-      <template slot="items" slot-scope="props">
+      <template slot="item" slot-scope="props">
         <tr>
           <td class="wrapped">{{ props.item.pool_name }}</td>
           <td class="wrapped">{{ props.item.framedipaddress }}</td>
@@ -210,10 +210,14 @@ export default {
     close() {
       this.ipDialog = false;
       this.poolDialog = false;
+      this.editedItem = {};
     },
     editItem(item) {
       this.ipDialog = this.editing = true;
-      this.editedItem = item;
+      /*
+       * Deep clone to avoid modyfing of the store value
+       */
+      this.editedItem = Object.assign({}, item);
     },
     async savePool(item) {
       await this.$store.dispatch('ippools/savePool', item);

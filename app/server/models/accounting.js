@@ -1,10 +1,10 @@
 class Accounting {
   static async showAccounting(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
-    sortBy = sortBy || 'username';
-    const order = descending ? 'DESC' : 'ASC';
+    sortBy = sortBy[0] || 'username';
+    const order = sortDesc ? 'ASC' : 'DESC';
     let optionalSearch = '';
     if (searchString) {
       optionalSearch = ` AND (acctsessionid LIKE '%${searchString}%' OR username LIKE '%${searchString}%' OR nasipaddress LIKE '%${searchString}%' OR nasporttype LIKE '%${searchString}%' OR acctstarttime LIKE '%${searchString}%' OR acctstoptime LIKE '%${searchString}%' OR framedipaddress LIKE '%${searchString}%' OR framedipv6address LIKE '%${searchString}%' OR clientmac LIKE '%${searchString}%' OR clientvendor LIKE '%${searchString}%' OR slaprofile LIKE '%${searchString}%' OR subscprofile LIKE '%${searchString}%' OR  callingstationid LIKE '%${searchString}%') `;

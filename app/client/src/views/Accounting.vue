@@ -18,77 +18,80 @@
         :options.sync="pagination"
         :loading="getLoading"
         item-key="acctsessionid"
+        :expanded.sync="expanded"
         class="elevation-5"
         style="min-width: 100%"
       >
-        <template slot="items" slot-scope="props">
+        <template v-slot:item="{ item }">
           <tr
-            :style="{ color: props.item.acctstoptime ? 'grey' : 'green' }"
+            :style="{ color: item.acctstoptime ? 'grey' : 'green' }"
             class="clickable"
-            @click="props.expanded = !props.expanded"
+            @click="expandRow(item)"
           >
-            <td>{{ props.item.acctsessionid }}</td>
-            <td>{{ props.item.username }}</td>
-            <td>{{ props.item.framedipaddress || 'N/A' }}</td>
-            <td>{{ props.item.framedipv6address || 'N/A' }}</td>
-            <td>{{ props.item.ipv6delegatedpfx }}</td>
-            <td>{{ props.item.acctinputoctets }}</td>
-            <td>{{ props.item.acctoutputoctets }}</td>
-            <td>{{ props.item.slaprofile }}</td>
-            <td>{{ props.item.subscprofile }}</td>
+            <td>{{ item.acctsessionid }}</td>
+            <td>{{ item.username }}</td>
+            <td>{{ item.framedipaddress || 'N/A' }}</td>
+            <td>{{ item.framedipv6address || 'N/A' }}</td>
+            <td>{{ item.ipv6delegatedpfx }}</td>
+            <td>{{ item.acctinputoctets }}</td>
+            <td>{{ item.acctoutputoctets }}</td>
+            <td>{{ item.slaprofile }}</td>
+            <td>{{ item.subscprofile }}</td>
             <td>
               <v-tooltip top>
                 <span>View this subscriber in the ELK (Kibana)</span>
-                <v-icon
-                  slot="activator"
-                  @click.stop="showTooltip(props.item.clientmac)"
-                  >chrome_reader_mode</v-icon
-                >
+                <template v-slot:activator="{ on }">
+                  <v-icon v-on="on" @click.stop="showTooltip(item.clientmac)"
+                    >chrome_reader_mode</v-icon
+                  >
+                </template>
               </v-tooltip>
             </td>
           </tr>
         </template>
-        <template slot="expand" slot-scope="props">
-          <v-card class="elevation-10">
-            <v-layout class="ml-5" row wrap>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">NAS IP:</span>
-                {{ props.item.nasipaddress }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">NAS port:</span>
-                {{ props.item.nasportid }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Client MAC:</span>
-                {{ props.item.clientmac }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Client vendor:</span>
-                {{ props.item.clienvendor || '-' }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Session start:</span>
-                {{ formatDateStamp(props.item.acctstarttime) }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Last update:</span>
-                {{ formatDateStamp(props.item.acctupdatetime) }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Session length:</span>
-                {{ formatTime(props.item.acctsessiontime) }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Session stop:</span>
-                {{ formatDateStamp(props.item.acctstoptime) || '-' }}
-              </v-flex>
-              <v-flex xs6 md3>
-                <span class="font-weight-black">Stop cause:</span>
-                {{ props.item.acctterminatecause || '-' }}
-              </v-flex>
-            </v-layout>
-          </v-card>
+        <template v-slot:expanded-item="{ item, headers }">
+          <td :colspan="headers.length">
+            <v-card class="elevation-10">
+              <v-layout class="ml-5">
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">NAS IP:</span>
+                  {{ item.nasipaddress }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">NAS port:</span>
+                  {{ item.nasportid }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Client MAC:</span>
+                  {{ item.clientmac }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Client vendor:</span>
+                  {{ item.clienvendor || '-' }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Session start:</span>
+                  {{ formatDateStamp(item.acctstarttime) }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Last update:</span>
+                  {{ formatDateStamp(item.acctupdatetime) }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Session length:</span>
+                  {{ formatTime(item.acctsessiontime) }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Session stop:</span>
+                  {{ formatDateStamp(item.acctstoptime) || '-' }}
+                </v-flex>
+                <v-flex xs6 md3>
+                  <span class="font-weight-black">Stop cause:</span>
+                  {{ item.acctterminatecause || '-' }}
+                </v-flex>
+              </v-layout>
+            </v-card>
+          </td>
         </template>
       </v-data-table>
     </v-flex>
@@ -161,6 +164,7 @@ export default {
         searchString: '',
       },
       tooltip: false,
+      expanded: [],
     };
   },
   computed: {
@@ -193,6 +197,13 @@ export default {
       const url = `${process.env.ELK_HOST}/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-4h,mode:quick,to:now))&_a=(columns:!(_source),index:AWFn3hy34NBPYG__wnEF,interval:auto,query:(query_string:(query:'mac_address:"${mac}"')),sort:!('@timestamp',desc))`;
 
       window.open(url, '_blank');
+    },
+    expandRow(val) {
+      if (this.expanded.length && this.expanded[0] == val) {
+        this.expanded = [];
+      } else {
+        this.expanded.push(val);
+      }
     },
   },
 };

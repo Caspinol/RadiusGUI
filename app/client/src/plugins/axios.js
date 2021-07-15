@@ -7,13 +7,11 @@ const ax = axios.create({
 export default {
   install(Vue, store) {
     ax.interceptors.request.use((config) => {
-      console.log('Request');
       store.commit('SET_LOADING');
       return config;
     });
 
     ax.interceptors.response.use((response) => {
-      console.log('Response');
       store.commit('CLEAR_LOADING');
       return response;
     });

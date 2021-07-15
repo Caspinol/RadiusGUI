@@ -22,7 +22,7 @@ const getters = {
 const actions = {
   async showAccounting({ commit, dispatch }, pagination) {
     try {
-      const { data } = await this.$axios.post(
+      const { data } = await this._vm.$axios.post(
         'accounting/showAccounting',
         pagination
       );

@@ -64,7 +64,9 @@ const getters = {
 const actions = {
   async fetchProfile({ commit, dispatch }, name) {
     try {
-      const { data } = await this.$axios.post('profiles/get-profile', { name });
+      const { data } = await this._vm.$axios.post('profiles/get-profile', {
+        name,
+      });
       commit('SET_PROFILE', data.pageData);
     } catch (err) {
       const notif = {
@@ -77,11 +79,10 @@ const actions = {
 
   async fetchProfiles({ commit, dispatch }, pagination) {
     try {
-      const { data } = await this.$axios.post(
+      const { data } = await this._vm.$axios.post(
         'profiles/list-profiles',
         pagination
       );
-      console.log(data);
       commit('FETCH_PROFILES_SUCCESS', data);
     } catch (err) {
       const notif = {
@@ -95,7 +96,7 @@ const actions = {
 
   async saveProfile({ commit, state, dispatch }) {
     try {
-      await this.$axios.post('profiles/save-profile', {
+      await this._vm.$axios.post('profiles/save-profile', {
         name: state.currentProfileName,
         rows: state.currentProfile,
       });
@@ -120,7 +121,7 @@ const actions = {
 
   async deleteProfile({ commit, dispatch }, profile) {
     try {
-      await this.$axios.post('profiles/delete-profile', {
+      await this._vm.$axios.post('profiles/delete-profile', {
         name: profile.groupname,
       });
       commit('UPDATE_PROFILE_LIST', {
@@ -141,11 +142,9 @@ const actions = {
     }
   },
 
-  async submitWizard({ commit, dispatch }, wizardData) {
+  async submitWizard({ dispatch }, wizardData) {
     try {
-      await this.$axios.post('profiles/wizardProfile', wizardData);
-      const { data } = await this.$axios.post('profiles/list-profiles');
-      commit('FETCH_PROFILES_SUCCESS', data);
+      await this._vm.$axios.post('profiles/wizardProfile', wizardData);
       const notif = {
         type: 'success',
         message: 'Profile created.',

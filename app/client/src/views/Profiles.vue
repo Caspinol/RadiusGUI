@@ -44,7 +44,7 @@
           item-key="groupname"
           class="elevation-5"
         >
-          <template slot="items" slot-scope="props">
+          <template slot="item" slot-scope="props">
             <tr
               :active="props.item.groupname === getCurrentProfileName"
               class="clickable"
@@ -54,13 +54,15 @@
               <td>{{ props.item.count }}</td>
               <td>
                 <v-tooltip top>
-                  <v-icon
-                    slot="activator"
-                    small
-                    color="accent"
-                    @click.stop="deleteProfile(props.item)"
-                    >delete</v-icon
-                  >
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      v-on="on"
+                      small
+                      color="accent"
+                      @click.stop="deleteProfile(props.item)"
+                      >delete</v-icon
+                    >
+                  </template>
                   <span
                     >Delete this profile. <br />If this profile is used by any
                     subscriber you have un-assign it first.
@@ -117,12 +119,11 @@
                 </v-flex>
                 <v-flex ma-1 xs1 sm1 md1 class="justify-center layout px-0">
                   <v-tooltip top>
-                    <v-icon
-                      slot="activator"
-                      color="accent"
-                      @click="removeRow(cp)"
-                      >delete_sweep</v-icon
-                    >
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" color="accent" @click="removeRow(cp)"
+                        >delete_sweep</v-icon
+                      >
+                    </template>
                     <span>Remove this row</span>
                   </v-tooltip>
                 </v-flex>
@@ -149,10 +150,11 @@
                 </v-flex>
                 <v-flex xs1 sm1 md1 class="justify-center layout px-0">
                   <v-tooltip top>
-                    <v-icon slot="activator" color="success" @click="addRow()">
-                      add_circle</v-icon
-                    >
-
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on" color="success" @click="addRow()">
+                        add_circle</v-icon
+                      >
+                    </template>
                     <span>Add this attribute to profile</span>
                   </v-tooltip>
                 </v-flex>
@@ -315,6 +317,7 @@ export default {
       this.$store.commit('profile/REMOVE_ROW', row);
     },
     async fetchProfile(name) {
+      console.log(name);
       await this.$store.dispatch('profile/fetchProfile', name);
       this.showProfile = 'currentProfile';
     },
@@ -356,6 +359,8 @@ export default {
     },
     async submitWizard() {
       await this.$store.dispatch('profile/submitWizard', this.wizard);
+
+      await this.$store.dispatch('profile/fetchProfiles', this.pagination);
     },
     close() {
       this.showProfile = '';
@@ -365,7 +370,7 @@ export default {
 };
 </script>
 
-<style lang="css" scoped>
+<style lang="scss">
 .clickable {
   cursor: pointer;
 }

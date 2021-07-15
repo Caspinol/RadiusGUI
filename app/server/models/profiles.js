@@ -5,7 +5,7 @@ class Profiles {
     conn,
     { page, rowsPerPage, sortBy, descending, searchString }
   ) {
-    sortBy = sortBy || 'groupname';
+    sortBy = sortBy[0] || 'groupname';
     const order = descending ? 'DESC' : 'ASC';
 
     let optionalSearch = '';
@@ -15,8 +15,9 @@ class Profiles {
 
     let sql_pagesize = '';
     if (parseInt(rowsPerPage) > 0) {
-      sql_pagesize = ` LIMIT ${rowsPerPage} OFFSET ${(page - 1) *
-        rowsPerPage} `;
+      sql_pagesize = ` LIMIT ${rowsPerPage} OFFSET ${
+        (page - 1) * rowsPerPage
+      } `;
     }
 
     const sql = `SELECT groupname, (SELECT count(username) FROM radusergroup as rug WHERE rug.groupname = rgr.groupname) as count FROM radius.radgroupreply as rgr ${optionalSearch} GROUP BY groupname ORDER BY ${sortBy} ${order} ${sql_pagesize};`;

@@ -3,11 +3,11 @@ const logger = require('../lib/logging');
 class Users {
   static async usersPage(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
     // We need to obtain Username, Password, Profile, and all address pools
-    sortBy = sortBy || 'username';
-    const order = descending ? 'DESC' : 'ASC';
+    sortBy = sortBy[0] || 'username';
+    const order = sortDesc[0] ? 'ASC' : 'DESC';
 
     let optionalSearch = '';
     if (searchString) {
@@ -26,7 +26,6 @@ class Users {
       'WHERE rc.username = rug.username ' +
       ` ${optionalSearch} ` +
       `ORDER BY rug.${sortBy} ${order} ${sql_pagesize};`;
-
     const sql_count =
       `SELECT COUNT(rc.username) as count FROM radusergroup AS rug ` +
       `JOIN radcheck AS rc WHERE rc.username = rug.username ${optionalSearch};`;
@@ -114,7 +113,7 @@ class Users {
   }
 }
 
-const get_profile_list = async function(conn) {
+const get_profile_list = async function (conn) {
   const sql =
     'SELECT groupname, ' +
     '(SELECT count(username) ' +
@@ -126,7 +125,7 @@ const get_profile_list = async function(conn) {
   return await conn.query(sql);
 };
 
-const get_ip4Pools = async function(conn) {
+const get_ip4Pools = async function (conn) {
   const sql =
     'SELECT distinct pool_name ' +
     'FROM radippool ' +
@@ -135,7 +134,7 @@ const get_ip4Pools = async function(conn) {
   return await conn.query(sql);
 };
 
-const get_ip6PDPools = async function(conn) {
+const get_ip6PDPools = async function (conn) {
   const sql =
     'SELECT distinct pool_name ' +
     'FROM radippool ' +
@@ -144,7 +143,7 @@ const get_ip6PDPools = async function(conn) {
   return await conn.query(sql);
 };
 
-const get_ip6NTPools = async function(conn) {
+const get_ip6NTPools = async function (conn) {
   const sql =
     'SELECT distinct pool_name ' +
     'FROM radippool ' +

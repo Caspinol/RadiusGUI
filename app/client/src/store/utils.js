@@ -55,7 +55,6 @@ const actions = {
     this._vm.$axios
       .post('utils/getHostStats')
       .then(({ data }) => {
-        console.log(data);
         commit('GET_HOST_STATS_SUCCESS', data);
       })
       .catch((err) => {

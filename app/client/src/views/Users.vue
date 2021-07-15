@@ -97,7 +97,7 @@
       item-key="username"
       class="elevation-5"
     >
-      <template slot="items" slot-scope="props">
+      <template slot="item" slot-scope="props">
         <tr>
           <td class="wrapped">{{ props.item.username }}</td>
           <td class="wrapped">{{ props.item.value }}</td>

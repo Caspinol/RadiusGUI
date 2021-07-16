@@ -1,11 +1,11 @@
-export const state = () => ({
+const state = () => ({
   ipamToken: null,
   ipamTokenExpiry: null,
   sections: [],
   subnets: [],
 });
 
-export const mutations = {
+const mutations = {
   SET_TOKEN(state, data) {
     state.ipamToken = data.token;
     state.ipamTokenExpiry = data.expires;
@@ -21,7 +21,7 @@ export const mutations = {
   },
 };
 
-export const getters = {
+const getters = {
   getSections(state) {
     return state.sections;
   },
@@ -30,10 +30,10 @@ export const getters = {
   },
 };
 
-export const actions = {
+const actions = {
   async authenticate({ commit }) {
     try {
-      const { data } = await this.$axios.post('subnets/get-token');
+      const { data } = await this._vm.$axios.post('subnets/get-token');
       commit('SET_TOKEN', data);
     } catch (e) {
       console.log('error fetching token', e);
@@ -41,7 +41,7 @@ export const actions = {
   },
   async fetchSections({ commit, state }) {
     try {
-      const { data } = await this.$axios.post('subnets/get-sections', {
+      const { data } = await this._vm.$axios.post('subnets/get-sections', {
         token: state.ipamToken,
       });
       commit('SET_SECTIONS', data);
@@ -52,7 +52,7 @@ export const actions = {
 
   async fetchSubnets({ commit, state }, sectionId) {
     try {
-      const { data } = await this.$axios.post('subnets/get-subnets', {
+      const { data } = await this._vm.$axios.post('subnets/get-subnets', {
         token: state.ipamToken,
         sectionId,
       });
@@ -63,3 +63,5 @@ export const actions = {
     }
   },
 };
+
+export default { namespaced: true, actions, mutations, getters, state };

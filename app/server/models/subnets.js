@@ -13,12 +13,12 @@ class Subnets {
         '/user/',
         {},
         {
-          auth: auth,
+          auth,
         }
       );
       token = data.data;
     } catch (e) {
-      console.log(e.response.data);
+      console.error('Authentication error: ' + e);
     }
 
     return token;
@@ -34,7 +34,7 @@ class Subnets {
       });
       sections = data.data;
     } catch (e) {
-      console.log('Failed to feth sections. ', e.response.data);
+      console.error('Failed to feth sections. ', e);
     }
 
     return sections;
@@ -51,10 +51,10 @@ class Subnets {
       });
       /* we want only top level subnets */
       subnets = data.data.filter(
-        subnet => parseInt(subnet.masterSubnetId) === 0
+        (subnet) => parseInt(subnet.masterSubnetId) === 0
       );
     } catch (e) {
-      console.log('Failed to fetch subnets', e.response.data);
+      console.error('Failed to fetch subnets', e.response.data);
     }
 
     return subnets;

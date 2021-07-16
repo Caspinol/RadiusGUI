@@ -30,6 +30,7 @@ import ippools from './ippools';
 import accounting from './accounting';
 import nas from './nas';
 import alerts from './alerts';
+import subnets from './subnets';
 
 Vue.use(Vuex);
 
@@ -48,5 +49,6 @@ export default new Vuex.Store({
     accounting,
     nas,
     alerts,
+    subnets,
   },
 });

@@ -7,15 +7,15 @@
       :server-items-length="changeCount"
       :options.sync="pagination"
       :loading="getLoading"
-      item-key="timestamp"
+      item-key="changelogid"
       class="elevation-5"
     >
-      <template slot="items" slot-scope="props">
+      <template v-slot:items="{ item }">
         <tr>
-          <td>{{ props.item.changelogid }}</td>
-          <td>{{ props.item.timestamp }}</td>
-          <td>{{ props.item.severity }}</td>
-          <td>{{ props.item.message }}</td>
+          <td>{{ item.changelogid }}</td>
+          <td>{{ item.timestamp }}</td>
+          <td>{{ item.severity }}</td>
+          <td>{{ item.message }}</td>
         </tr>
       </template>
     </v-data-table>
@@ -29,12 +29,14 @@ export default {
   data() {
     return {
       headers: [
-        { text: 'ID', value: 'changelogid', sortable: false },
+        { text: 'ID', value: 'changelogid' },
         { text: 'Timestamp', value: 'timestamp' },
         { text: 'Severity', value: 'severity' },
         { text: 'Message', value: 'message' },
       ],
-      pagination: {},
+      pagination: {
+        rowsPerPage: 10,
+      },
       changelist: [],
       changeCount: 0,
     };
@@ -45,21 +47,12 @@ export default {
   watch: {
     pagination: {
       async handler() {
-        const {
-          page,
-          rowsPerPage,
-          sortBy,
-          descending,
-          searchString,
-        } = this.pagination;
+        const { searchString } = this.pagination;
         if (!searchString || searchString.length >= 3) {
-          const { data } = await this.$axios.post('changelog/show-logs', {
-            page,
-            size: rowsPerPage,
-            sortBy,
-            descending,
-            searchString,
-          });
+          const { data } = await this.$axios.post(
+            'changelog/show-logs',
+            this.pagination
+          );
           this.changelist = data.pageData;
           this.changeCount = data.total_count;
         }

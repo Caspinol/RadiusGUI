@@ -239,6 +239,7 @@ export default {
       this.close();
     },
     async deleteItem(item) {
+      console.log(item);
       this.$snotify.confirm(
         `Really delete [${item.framedipaddress}]?`,
         'Confirm',

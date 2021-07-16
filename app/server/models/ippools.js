@@ -7,7 +7,7 @@ class Ippools {
     { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
     sortBy = sortBy[0] || 'pool_name';
-    const order = sortDesc ? 'ASC' : 'DESC';
+    const order = sortDesc[0] ? 'ASC' : 'DESC';
 
     let optionalSearch = '';
     if (searchString) {
@@ -40,9 +40,6 @@ class Ippools {
       'radippool(pool_name,framedipaddress,framedipmask,gateway_ip,username,pool_key) ' +
       'VALUES(?,?,?,?,?,?);';
 
-    logger.log('changelog', {
-      message: `Adding new IP entry: [${pool_name}, ${framedipaddress}, ${framedipmask}, ${gateway_ip}, ${username}]`,
-    });
     await conn.query(sql_save, [
       pool_name,
       framedipaddress,
@@ -53,7 +50,7 @@ class Ippools {
     ]);
 
     logger.log('changelog', {
-      message: `IP entry stored.`,
+      message: `Added new IP entry: [${pool_name}, ${framedipaddress}, ${framedipmask}, ${gateway_ip}, ${username}]`,
     });
   }
 
@@ -113,12 +110,10 @@ class Ippools {
     }, this);
     // remove trailing ","
     sql_save = sql_save.slice(0, -1);
-    logger.log('changelog', {
-      message: `Saving pool: [${cidr}, ${gateway}]`,
-    });
+
     await conn.query(sql_save);
     logger.log('changelog', {
-      message: `Saved.`,
+      message: `Saved pool: [${pool_name}, ${cidr}, ${gateway}]`,
     });
     return {
       message: 'ok',
@@ -151,16 +146,12 @@ class Ippools {
     });
   }
 
-  static async deleteIp(conn, { id }) {
+  static async deleteIp(conn, { id, pool_name }) {
     let sql_delete = 'DELETE FROM radippool WHERE id=?;';
-    logger.log('changelog', {
-      message: `Deleting IP entry [${id}]`,
-    });
 
     await conn.query(sql_delete, [id]);
-
     logger.log('changelog', {
-      message: `Deleted.`,
+      message: `Deleted IP entry: Id: [${id}], pool name: [${pool_name}]`,
     });
   }
 }

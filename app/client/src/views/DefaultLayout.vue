@@ -79,6 +79,7 @@ export default {
         { icon: 'how_to_reg', title: 'Accounting', to: '/accounting' },
         { icon: 'subtitles', title: 'NAS', to: '/nas' },
         { icon: 'history', title: 'Changelog', to: '/changelog' },
+        { icon: 'settings', title: 'Settings', to: '/settings' },
       ],
       miniVariant: true,
       title: 'RadiusGUI',

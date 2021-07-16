@@ -30,6 +30,7 @@ const routes = [
       },
       { path: '/nas', component: () => import('../views/Nas.vue') },
       { path: '/changelog', component: () => import('../views/Changelog.vue') },
+      { path: '/settings', component: () => import('../views/Settings.vue') },
     ],
   },
 ];

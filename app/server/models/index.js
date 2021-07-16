@@ -8,4 +8,5 @@ module.exports = {
   Utils: require('./utils'),
   Changelog: require('./changelog'),
   Subnets: require('./subnets'),
+  Settings: require('./settings'),
 };

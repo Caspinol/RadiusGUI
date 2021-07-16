@@ -29,6 +29,7 @@ import profile from './profile';
 import ippools from './ippools';
 import accounting from './accounting';
 import nas from './nas';
+import alerts from './alerts';
 
 Vue.use(Vuex);
 
@@ -46,5 +47,6 @@ export default new Vuex.Store({
     ippools,
     accounting,
     nas,
+    alerts,
   },
 });

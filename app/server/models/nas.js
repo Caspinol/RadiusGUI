@@ -3,10 +3,10 @@ const logger = require('../lib/logging');
 class Nas {
   static async showNaslist(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
-    sortBy = sortBy || 'nasname';
-    const order = descending ? 'DESC' : 'ASC';
+    sortBy = sortBy[0] || 'nasname';
+    const order = sortDesc[0] ? 'ASC' : 'DESC';
 
     let optionalSearch = '';
     if (searchString) {

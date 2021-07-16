@@ -88,38 +88,38 @@
       item-key="nasname"
       class="elevation-5"
     >
-      <template slot="items" slot-scope="props">
-        <tr class="clickable" @click="props.expanded = !props.expanded">
-          <td>{{ props.item.nasname }}</td>
-          <td>{{ props.item.shortname }}</td>
-          <td>{{ props.item.type }}</td>
-          <td>{{ props.item.ports }}</td>
-          <td>{{ props.item.secret }}</td>
-          <td>{{ props.item.server }}</td>
-          <td>{{ props.item.community }}</td>
+      <template v-slot:item="{ item, expand, isExpanded }">
+        <tr class="clickable" @click="expand(!isExpanded)">
+          <td>{{ item.nasname }}</td>
+          <td>{{ item.shortname }}</td>
+          <td>{{ item.type }}</td>
+          <td>{{ item.ports }}</td>
+          <td>{{ item.secret }}</td>
+          <td>{{ item.server }}</td>
+          <td>{{ item.community }}</td>
           <td class="justify-center layout px-0">
             <v-icon
               small
               color="accent"
               class="mr-2"
-              @click.stop="editItem(props.item)"
+              @click.stop="editItem(item)"
               >edit</v-icon
             >
-            <v-icon small color="accent" @click.stop="deleteItem(props.item)"
+            <v-icon small color="accent" @click.stop="deleteItem(item)"
               >delete</v-icon
             >
           </td>
         </tr>
       </template>
-      <template slot="expand" slot-scope="props">
-        <v-card class="elevation-10">
-          <v-layout class="ml-5" row wrap>
-            <v-flex xs6 md3>
-              <span>Description:</span>
-              {{ props.item.description }}
-            </v-flex>
-          </v-layout>
-        </v-card>
+      <template v-slot:expanded-item="{ item, headers }">
+        <td :colspan="headers.length">
+          <v-card>
+            <v-layout row mx-2>
+              <v-layout>Description:</v-layout>
+              <v-layout>{{ item.description }}</v-layout>
+            </v-layout>
+          </v-card>
+        </td>
       </template>
     </v-data-table>
   </v-card>

@@ -1,6 +1,6 @@
 const logger = require('../lib/logging');
 
-class Nas {
+export default class Nas {
   static async showNaslist(
     conn,
     { page, rowsPerPage, sortBy, sortDesc, searchString }
@@ -111,5 +111,3 @@ class Nas {
     return;
   }
 }
-
-module.exports = Nas;

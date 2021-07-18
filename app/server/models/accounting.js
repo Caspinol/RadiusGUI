@@ -1,4 +1,4 @@
-class Accounting {
+export default class Accounting {
   static async showAccounting(
     conn,
     { page, rowsPerPage, sortBy, sortDesc, searchString }
@@ -26,5 +26,3 @@ class Accounting {
     };
   }
 }
-
-module.exports = Accounting;

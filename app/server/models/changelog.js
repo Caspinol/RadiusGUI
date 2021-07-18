@@ -1,4 +1,4 @@
-class Changelog {
+export default class Changelog {
   static async showLogs(
     conn,
     { page, rowsPerPage, sortBy, sortDesc, searchString }
@@ -17,7 +17,6 @@ class Changelog {
 
     let sql_list = `SELECT * FROM changelog ${optionalSearch} ORDER BY ${sortBy} ${order} ${offset};`;
     let sql_count = `SELECT COUNT(changelogid) as count FROM changelog ${optionalSearch};`;
-    console.log(sql_list);
     const [changelist] = await conn.query(sql_list);
     const [count] = await conn.query(sql_count);
     return {
@@ -26,5 +25,3 @@ class Changelog {
     };
   }
 }
-
-module.exports = Changelog;

@@ -1,7 +1,7 @@
 const iputils = require('../lib/ip-utils');
 const logger = require('../lib/logging');
 
-class Ippools {
+export default class Ippools {
   static async showPools(
     conn,
     { page, rowsPerPage, sortBy, sortDesc, searchString }
@@ -130,9 +130,6 @@ class Ippools {
       'username=?,pool_key=0 ' +
       'WHERE id=?;';
 
-    logger.log('changelog', {
-      message: `Updating IP entry: [${pool_name}, ${framedipaddress}, ${framedipmask}, ${gateway_ip}, ${username}]`,
-    });
     await conn.query(sql_update, [
       pool_name,
       framedipaddress,
@@ -141,8 +138,9 @@ class Ippools {
       username,
       id,
     ]);
+
     logger.log('changelog', {
-      message: `Updated.`,
+      message: `Updating IP entry: [${pool_name}, ${framedipaddress}, ${framedipmask}, ${gateway_ip}, ${username}]`,
     });
   }
 
@@ -155,5 +153,3 @@ class Ippools {
     });
   }
 }
-
-module.exports = Ippools;

@@ -1,4 +1,4 @@
-class Settings {
+export default class Settings {
   static async getAlertSettings(conn) {
     let alertSettings = {};
     console.log('Fetching settings');
@@ -35,5 +35,3 @@ class Settings {
     }
   }
 }
-
-module.exports = Settings;

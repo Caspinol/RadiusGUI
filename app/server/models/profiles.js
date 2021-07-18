@@ -1,6 +1,6 @@
 const logger = require('../lib/logging');
 
-class Profiles {
+export default class Profiles {
   static async listProfiles(
     conn,
     { page, rowsPerPage, sortBy, descending, searchString }
@@ -95,5 +95,3 @@ class Profiles {
     });
   }
 }
-
-module.exports = Profiles;

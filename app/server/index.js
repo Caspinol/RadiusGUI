@@ -27,7 +27,7 @@ const path2method = (path) => {
 const mysql = require('mysql2/promise');
 const multipart = require('co-busboy');
 const parse = require('co-body');
-const models = require('./models');
+import models from './models';
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,

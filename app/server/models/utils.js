@@ -1,7 +1,7 @@
 const proc = require('../lib/process');
 const os = require('os');
 
-class Utils {
+export default class Utils {
   static async getServerStatus() {
     let res = null;
     try {
@@ -73,5 +73,3 @@ function formatTime(s) {
 ${minutes < 10 ? '0' + minutes : minutes}:
 ${seconds < 10 ? '0' + seconds : seconds}`;
 }
-
-module.exports = Utils;

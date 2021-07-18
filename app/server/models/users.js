@@ -1,6 +1,6 @@
 const logger = require('../lib/logging');
 
-class Users {
+export default class Users {
   static async usersPage(
     conn,
     { page, rowsPerPage, sortBy, sortDesc, searchString }
@@ -151,5 +151,3 @@ const get_ip6NTPools = async function (conn) {
 
   return await conn.query(sql);
 };
-
-module.exports = Users;

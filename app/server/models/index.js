@@ -1,12 +1,23 @@
-module.exports = {
-  Dashboard: require('./dashboard'),
-  Nas: require('./nas'),
-  Users: require('./users'),
-  Accounting: require('./accounting'),
-  Ippools: require('./ippools'),
-  Profiles: require('./profiles'),
-  Utils: require('./utils'),
-  Changelog: require('./changelog'),
-  Subnets: require('./subnets'),
-  Settings: require('./settings'),
+import Users from './users';
+import Dashboard from './dashboard';
+import Nas from './nas';
+import Accounting from './accounting';
+import Ippools from './ippools';
+import Profiles from './profiles';
+import Utils from './utils';
+import Changelog from './changelog';
+import Subnets from './subnets';
+import Settings from './settings';
+
+export default {
+  Dashboard,
+  Nas,
+  Users,
+  Accounting,
+  Ippools,
+  Profiles,
+  Utils,
+  Changelog,
+  Subnets,
+  Settings,
 };

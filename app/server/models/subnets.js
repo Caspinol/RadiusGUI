@@ -5,7 +5,7 @@ const auth = {
   password: process.env.IPAM_API_PASS,
 };
 
-class Subnets {
+export default class Subnets {
   static async getToken() {
     let token = {};
     try {
@@ -60,5 +60,3 @@ class Subnets {
     return subnets;
   }
 }
-
-module.exports = Subnets;

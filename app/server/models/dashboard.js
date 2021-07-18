@@ -1,4 +1,4 @@
-class Dashboard {
+export default class Dashboard {
   static async showDashboard(conn) {
     // Get 5 guys with the most traffic
     const sql_top_traffic =
@@ -49,4 +49,3 @@ class Dashboard {
     };
   }
 }
-module.exports = Dashboard;

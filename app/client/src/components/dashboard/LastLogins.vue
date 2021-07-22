@@ -18,7 +18,7 @@
         :server-items-length="getLogins.count"
         :options.sync="pagination"
         :loading="getLoading"
-        item-key="username"
+        item-key="id"
       >
         <template slot="items" slot-scope="props">
           <tr>
@@ -62,7 +62,6 @@ export default {
     pagination: {
       async handler() {
         const { searchString } = this.pagination;
-        console.log(this.pagination);
         if (!searchString || searchString.length >= 3) {
           await this.$store.dispatch('utils/getLastLogins', this.pagination);
         }

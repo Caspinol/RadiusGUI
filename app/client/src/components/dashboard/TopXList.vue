@@ -9,13 +9,13 @@
         item-key="radacctid"
         hide-default-footer
       >
-        <template slot="items" slot-scope="props">
+        <template v-slot:items="{ item }">
           <tr>
-            <td>{{ props.item.radacctid }}</td>
-            <td>{{ props.item.username }}</td>
-            <td>{{ props.item.framedipaddress }}</td>
-            <td>{{ props.item.acctoutputoctets }}</td>
-            <td>{{ props.item.acctinputoctets }}</td>
+            <td>{{ item.radacctid }}</td>
+            <td>{{ item.username }}</td>
+            <td>{{ item.framedipaddress }}</td>
+            <td>{{ item.acctoutputoctets }}</td>
+            <td>{{ item.acctinputoctets }}</td>
           </tr>
         </template>
       </v-data-table>
@@ -35,10 +35,10 @@ export default {
     return {
       headers: [
         { text: '#', value: 'radacctid', sortable: false },
-        { text: 'Username', value: 'username' },
-        { text: 'IPv4', value: 'framedipaddress' },
-        { text: 'Download', value: 'acctoutputoctets' },
-        { text: 'Upload', value: 'acctinputoctets' },
+        { text: 'Username', value: 'username', sortable: false },
+        { text: 'IPv4', value: 'framedipaddress', sortable: false },
+        { text: 'Download', value: 'acctoutputoctets', sortable: false },
+        { text: 'Upload', value: 'acctinputoctets', sortable: false },
       ],
     };
   },

@@ -103,6 +103,9 @@
           <v-expansion-panel-header>
             <div>Profile settings</div>
           </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <LoginList />
+          </v-expansion-panel-content>
           <v-expansion-panel-content> </v-expansion-panel-content>
         </v-expansion-panel>
         <v-expansion-panel>
@@ -117,8 +120,10 @@
 </template>
 
 <script>
+import LoginList from '../components/LoginList';
 import { mapGetters } from 'vuex';
 export default {
+  components: { LoginList },
   data() {
     return {
       alert: {

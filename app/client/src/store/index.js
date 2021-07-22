@@ -31,6 +31,7 @@ import accounting from './accounting';
 import nas from './nas';
 import alerts from './alerts';
 import subnets from './subnets';
+import login from './login';
 
 Vue.use(Vuex);
 
@@ -50,5 +51,6 @@ export default new Vuex.Store({
     nas,
     alerts,
     subnets,
+    login,
   },
 });

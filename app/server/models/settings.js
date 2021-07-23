@@ -1,7 +1,6 @@
 export default class Settings {
   static async getAlertSettings(conn) {
     let alertSettings = {};
-    console.log('Fetching settings');
     try {
       const [settings] = await conn.query('SELECT * FROM alert_settings;');
       alertSettings = settings[0];

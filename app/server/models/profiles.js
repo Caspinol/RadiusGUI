@@ -3,10 +3,10 @@ const logger = require('../lib/logging');
 export default class Profiles {
   static async listProfiles(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
     sortBy = sortBy[0] || 'groupname';
-    const order = descending ? 'DESC' : 'ASC';
+    const order = sortDesc[0] ? 'DESC' : 'ASC';
 
     let optionalSearch = '';
     if (searchString) {

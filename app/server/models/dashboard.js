@@ -14,7 +14,7 @@ export default class Dashboard {
 
       btu = big_traffic_users;
     } catch (err) {
-      console.log(err);
+      console.error(err);
     }
     return {
       big_traffic_users: btu,
@@ -23,10 +23,10 @@ export default class Dashboard {
 
   static async showLastLogins(
     conn,
-    { page, rowsPerPage, sortBy, descending, searchString }
+    { page, rowsPerPage, sortBy, sortDesc, searchString }
   ) {
     sortBy = sortBy[0] || 'authdate';
-    const order = descending ? 'DESC' : 'ASC';
+    const order = sortDesc[0] ? 'DESC' : 'ASC';
 
     let sql_pagesize = '';
     if (parseInt(rowsPerPage) > 0) {
@@ -40,7 +40,7 @@ export default class Dashboard {
 
     const sql_last_logins = `SELECT * FROM radpostauth ${optionalSearch}  ORDER BY ${sortBy} ${order} ${sql_pagesize}`;
     const sql_count = `SELECT COUNT(*) as count FROM radpostauth ${optionalSearch};`;
-    console.log(sql_last_logins);
+
     const [logins] = await conn.query(sql_last_logins);
     const [count] = await conn.query(sql_count);
     return {

@@ -8,6 +8,7 @@ import Utils from './utils';
 import Changelog from './changelog';
 import Subnets from './subnets';
 import Settings from './settings';
+import Login from './login';
 
 export default {
   Dashboard,
@@ -20,4 +21,5 @@ export default {
   Changelog,
   Subnets,
   Settings,
+  Login,
 };

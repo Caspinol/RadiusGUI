@@ -5,9 +5,10 @@
       <v-card class="primary" style="max-width: 99%">
         <!-- Profile list button header -->
         <v-layout>
-          <v-flex>
+          <v-flex class="mt-1">
             <v-btn
               color="accent"
+              class="mx-2"
               @click="
                 cleanUpForm();
                 showProfile = 'currentProfile';
@@ -16,6 +17,7 @@
             >
             <v-btn
               color="accent"
+              class="mx-2"
               @click="
                 cleanUpForm();
                 showProfile = 'profileWizard';
@@ -44,14 +46,14 @@
           item-key="groupname"
           class="elevation-5"
         >
-          <template slot="item" slot-scope="props">
+          <template v-slot:item="{ item }">
             <tr
-              :active="props.item.groupname === getCurrentProfileName"
+              :active="item.groupname === getCurrentProfileName"
               class="clickable"
-              @click="fetchProfile(props.item.groupname)"
+              @click="fetchProfile(item.groupname)"
             >
-              <td>{{ props.item.groupname }}</td>
-              <td>{{ props.item.count }}</td>
+              <td>{{ item.groupname }}</td>
+              <td>{{ item.count }}</td>
               <td>
                 <v-tooltip top>
                   <template v-slot:activator="{ on }">
@@ -59,7 +61,7 @@
                       v-on="on"
                       small
                       color="accent"
-                      @click.stop="deleteProfile(props.item)"
+                      @click.stop="deleteProfile(item)"
                       >delete</v-icon
                     >
                   </template>
@@ -349,7 +351,7 @@ export default {
             {
               text: 'No',
               action: (toast) => {
-                this.$snotify.remove(toast.id);
+                this.$snertify.remove(toast.id);
               },
               bold: true,
             },
@@ -359,7 +361,6 @@ export default {
     },
     async submitWizard() {
       await this.$store.dispatch('profile/submitWizard', this.wizard);
-
       await this.$store.dispatch('profile/fetchProfiles', this.pagination);
     },
     close() {

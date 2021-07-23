@@ -48,7 +48,10 @@
         >
           <template v-slot:item="{ item }">
             <tr
-              :active="item.groupname === getCurrentProfileName"
+              :class="{
+                selected:
+                  item.groupname === getCurrentProfileName ? true : false,
+              }"
               class="clickable"
               @click="fetchProfile(item.groupname)"
             >
@@ -319,7 +322,6 @@ export default {
       this.$store.commit('profile/REMOVE_ROW', row);
     },
     async fetchProfile(name) {
-      console.log(name);
       await this.$store.dispatch('profile/fetchProfile', name);
       this.showProfile = 'currentProfile';
     },
@@ -374,5 +376,8 @@ export default {
 <style lang="scss">
 .clickable {
   cursor: pointer;
+}
+.selected {
+  background-color: #bbb;
 }
 </style>
